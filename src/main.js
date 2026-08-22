@@ -12,6 +12,8 @@ const locationDisplay = document.getElementById("location");
 let book = null;
 let rendition = null;
 
+let toc = [];
+
 // Handle file input change event
 // When a user selects an EPUB file, read it (arrayBuffer) and render it using epub.js
 fileInput.addEventListener("change", async (event) => {
@@ -27,6 +29,11 @@ fileInput.addEventListener("change", async (event) => {
         reader.innerHTML = "";
 
         book = ePub(arrayBuffer);
+
+        // get an array of objects representing the table of contents of the EPUB file
+        const navigation = await book.loaded.navigation;
+        toc = navigation.toc;
+        console.log("EPUB TOC:", toc);
 
         rendition = book.renderTo(reader, {
             width: "100%",
@@ -51,20 +58,67 @@ fileInput.addEventListener("change", async (event) => {
 
 });
 
-// Update chapter display based on the current location
+// find current chapter based on the toc and update the display
 function updateChapter(location) {
 
-    if (!location || !location.start) {
+    if (!location || !location.start || !book) {
         return;
     }
 
-    const index = location.start.index;
+    const currentHref = location.start.href;
 
-    if (index === undefined) {
+    if (!currentHref) {
         return;
     }
 
-    locationDisplay.textContent = `Chapter ${index + 1}`;
+    const chapter = findTocEntry(currentHref, toc);
+
+    if (chapter) {
+
+        locationDisplay.textContent = chapter.label;
+
+    } else {
+
+        locationDisplay.textContent = "";
+
+    }
+
+}
+
+
+
+// find matching TOC entry (helper function for updateChapter)
+function findTocEntry(href, entries) {
+
+    for (const entry of entries) {
+
+        // remove fragment (#something)
+        const entryHref = entry.href.split("#")[0];
+        const currentHref = href.split("#")[0];
+
+        if (currentHref.endsWith(entryHref)) {
+
+            return entry;
+
+        }
+
+        // check nested TOC entries
+        if (entry.subitems && entry.subitems.length > 0) {
+
+            const result = findTocEntry(
+                href,
+                entry.subitems
+            );
+
+            if (result) {
+                return result;
+            }
+
+        }
+
+    }
+
+    return null;
 
 }
 
