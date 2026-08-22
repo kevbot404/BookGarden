@@ -4,7 +4,7 @@
   "description": "<p align=\"center\">\r   <img src=\"screenshots/logo.png\" height=\"250\" width=\"300\" title=\"BookGarden\" alt=\"BookGarden\">\r </p>",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,10 @@
   "dependencies": {
     "epubjs": "^0.3.93"
   },
+  "overrides": {
+    "epubjs": {
+      "@xmldom/xmldom": "0.9.12"
+    },
   "devDependencies": {
     "vite": "^8.2.2"
   }
