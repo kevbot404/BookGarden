@@ -79,7 +79,7 @@ function updateChapter(location) {
 
     } else {
 
-        locationDisplay.textContent = "";
+        locationDisplay.textContent = "Unknown Chapter";
 
     }
 
