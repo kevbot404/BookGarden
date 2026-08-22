@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screenshots/logo.png" height="250" width="300" title="BookGarden" alt="BookGarden">
+  <img src="media/logo.png" height="250" width="300" title="BookGarden" alt="BookGarden">
 </p>
 
 <h1 align="center">Book Garden</h1>

@@ -1,0 +1,21 @@
+{
+  "name": "bookgarden",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r   <img src=\"screenshots/logo.png\" height=\"250\" width=\"300\" title=\"BookGarden\" alt=\"BookGarden\">\r </p>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevbot404/BookGarden.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kevbot404/BookGarden/issues"
+  },
+  "homepage": "https://github.com/kevbot404/BookGarden#readme"
+}
