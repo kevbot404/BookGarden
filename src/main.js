@@ -1,13 +1,10 @@
 import ePub from "epubjs";
 import "./style.css";
+import { updateChapter, findTocEntry, renderToc, readMetadata } from "./helpers.js";
 
 const fileInput = document.getElementById("epubFile");
 
 const browseBtn = document.getElementById("browseBtn");
-
-browseBtn.addEventListener("click", () => {
-    fileInput.click();
-});
 
 const reader = document.getElementById("reader");
 
@@ -55,7 +52,6 @@ fileInput.addEventListener("change", async (event) => {
         // get an array of objects representing the table of contents of the EPUB file
         const navigation = await book.loaded.navigation;
         toc = navigation.toc;
-        renderToc(toc);
         console.log("EPUB TOC:", toc);
 
         rendition = book.renderTo(reader, {
@@ -64,9 +60,14 @@ fileInput.addEventListener("change", async (event) => {
             flow: "paginated"
         });
 
+        renderToc(toc, tocList, tocPanel, rendition);
+
         rendition.on("relocated", (location) => {
 
-            updateChapter(location);
+            const label = updateChapter(location, toc);
+            if (label) {
+                locationDisplay.textContent = label;
+            }
 
         });
 
@@ -80,117 +81,6 @@ fileInput.addEventListener("change", async (event) => {
     }
 
 });
-
-// find current chapter based on the toc and update the display
-function updateChapter(location) {
-
-    if (!location || !location.start || !book) {
-        return;
-    }
-
-    const currentHref = location.start.href;
-
-    if (!currentHref) {
-        return;
-    }
-
-    const chapter = findTocEntry(currentHref, toc);
-
-    if (chapter) {
-
-        locationDisplay.textContent = chapter.label;
-
-    } else {
-
-        locationDisplay.textContent = "Unknown Chapter";
-
-    }
-
-}
-
-// find matching TOC entry (helper function for updateChapter)
-function findTocEntry(href, entries) {
-
-    for (const entry of entries) {
-
-        // remove fragment (#something)
-        const entryHref = entry.href.split("#")[0];
-        const currentHref = href.split("#")[0];
-
-        if (currentHref.endsWith(entryHref)) {
-
-            return entry;
-
-        }
-
-        // check nested TOC entries
-        if (entry.subitems && entry.subitems.length > 0) {
-
-            const result = findTocEntry(
-                href,
-                entry.subitems
-            );
-
-            if (result) {
-                return result;
-            }
-
-        }
-
-    }
-
-    return null;
-
-}
-
-// Render the table of contents (TOC) in the TOC panel
-function renderToc(entries, container = tocList) {
-
-    container.innerHTML = "";
-
-    for (const entry of entries) {
-
-        const button = document.createElement("button");
-
-        button.className = "toc-entry";
-
-        button.textContent = entry.label;
-
-        button.addEventListener("click", async () => {
-
-            if (!rendition) {
-                return;
-            }
-
-            await rendition.display(entry.href);
-
-            // Close TOC after selecting a chapter
-            tocPanel.classList.remove("open");
-
-        });
-
-        container.appendChild(button);
-
-
-        // Nested TOC entries
-        if (entry.subitems && entry.subitems.length > 0) {
-
-            const children = document.createElement("div");
-
-            children.className = "toc-children";
-
-            container.appendChild(children);
-
-            renderToc(
-                entry.subitems,
-                children
-            );
-
-        }
-
-    }
-
-}
 
 tocButton.addEventListener("click", () => {
 
@@ -239,8 +129,6 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-async function readMetadata(book) {
-    const metadata = await book.loaded.metadata;
-    console.log("EPUB metadata:", metadata);
-    return metadata;
-}
+browseBtn.addEventListener("click", () => {
+    fileInput.click();
+});
