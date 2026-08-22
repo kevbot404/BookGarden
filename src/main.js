@@ -1,6 +1,13 @@
 import ePub from "epubjs";
 import "./style.css";
-import { updateChapter, findTocEntry, renderToc, readMetadata } from "./helpers.js";
+
+import {
+    updateChapter,
+    findTocEntry,
+    renderToc,
+    readMetadata
+} from "./helpers.js";
+
 import {
     applyReaderSettings,
     increaseFontSize,
@@ -13,30 +20,58 @@ import {
     getReaderSettings
 } from "./readerSettings.js";
 
-const fileInput = document.getElementById("epubFile");
 
-const browseBtn = document.getElementById("browseBtn");
+const fileInput =
+    document.getElementById("epubFile");
 
-const reader = document.getElementById("reader");
+const browseBtn =
+    document.getElementById("browseBtn");
 
-const bookTitle = document.getElementById("bookTitle");
+const reader =
+    document.getElementById("reader");
 
-const previousButton = document.getElementById("previous");
-const nextButton = document.getElementById("next");
+const bookTitle =
+    document.getElementById("bookTitle");
 
-const locationDisplay = document.getElementById("location");
 
-const tocButton = document.getElementById("tocButton");
-const closeTocButton = document.getElementById("closeToc");
+const previousButton =
+    document.getElementById("previous");
 
-const tocPanel = document.getElementById("toc");
-const tocList = document.getElementById("tocList");
+const nextButton =
+    document.getElementById("next");
 
-const settingsButton = document.getElementById("settingsButton");
-const closeSettingsButton = document.getElementById("closeSettings");
 
-const settingsPanel = document.getElementById("readerSettings");
+const locationDisplay =
+    document.getElementById("location");
 
+
+const tocButton =
+    document.getElementById("tocButton");
+
+const closeTocButton =
+    document.getElementById("closeToc");
+
+const tocPanel =
+    document.getElementById("toc");
+
+const tocList =
+    document.getElementById("tocList");
+
+
+const settingsButton =
+    document.getElementById("settingsButton");
+
+const closeSettingsButton =
+    document.getElementById("closeSettings");
+
+const settingsPanel =
+    document.getElementById("readerSettings");
+
+const viewModeButton =
+    document.getElementById("viewModeButton");
+
+
+// Reader settings controls
 
 const fontIncreaseButton =
     document.getElementById("fontIncrease");
@@ -60,143 +95,340 @@ const resetSettingsButton =
     document.getElementById("resetSettings");
 
 
-
 let book = null;
 let rendition = null;
-
 let toc = [];
+let viewMode = "scrolled-doc";
 
-// Handle file input change event
-// When a user selects an EPUB file, read it (arrayBuffer) and render it using epub.js
-fileInput.addEventListener("change", async (event) => {
-    const file = event.target.files[0];
+function createRendition() {
 
-    if (!file) {
+    if (!book) {
+        return null;
+    }
+
+    reader.innerHTML = "";
+
+    const newRendition = book.renderTo(reader, {
+        width: "100%",
+        height: "100%",
+        flow: viewMode
+    });
+
+    applyReaderSettings(newRendition);
+
+    newRendition.on("relocated",
+        (location) => {
+            const label = updateChapter(location, toc);
+
+            if (label) {
+                locationDisplay.textContent = label;
+            }
+        }
+    );
+
+    renderToc(
+        toc,
+        tocList,
+        tocPanel,
+        newRendition
+    );
+
+    return newRendition;
+}
+
+function updateViewModeButton() {
+
+    if (!viewModeButton) {
+        return;
+    }
+
+    if (viewMode === "scrolled-doc") {
+
+        viewModeButton.textContent =
+            "Change to Double Pages format";
+
+        viewModeButton.title =
+            "Switch to page view";
+
+    } else {
+
+        viewModeButton.textContent =
+            "Change to Scrolled format";
+
+        viewModeButton.title =
+            "Switch to scroll view";
+    }
+}
+
+
+async function setViewMode(mode) {
+
+    if (!book || !rendition) {
+        return;
+    }
+
+    let currentCfi = null;
+
+    try {
+
+        const currentLocation =
+            rendition.currentLocation();
+
+        if (
+            currentLocation &&
+            currentLocation.start &&
+            currentLocation.start.cfi
+        ) {
+            currentCfi =
+                currentLocation.start.cfi;
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Could not save current location:",
+            error
+        );
+    }
+
+    try {
+
+        rendition.destroy();
+
+    } catch (error) {
+
+        console.warn(
+            "Could not destroy old rendition:",
+            error
+        );
+    }
+
+    viewMode = mode;
+
+    rendition = createRendition();
+
+    if (!rendition) {
         return;
     }
 
     try {
-        const arrayBuffer = await file.arrayBuffer();
 
-        reader.innerHTML = "";
+        if (currentCfi) {
 
-        book = ePub(arrayBuffer);
+            await rendition.display(
+                currentCfi
+            );
 
-        const metadata = await readMetadata(book);
+        } else {
 
-        bookTitle.textContent =
-            metadata.title || "Unknown Book";
-
-        // get an array of objects representing the table of contents of the EPUB file
-        const navigation = await book.loaded.navigation;
-        toc = navigation.toc;
-        console.log("EPUB TOC:", toc);
-
-        rendition = book.renderTo(reader, {
-            width: "100%",
-            height: "100%",
-            flow: "scrolled-doc"
-        });
-        
-        applyReaderSettings(rendition);
-
-        syncSettingsUI();
-
-        renderToc(toc, tocList, tocPanel, rendition);
-
-        rendition.on("relocated", (location) => {
-
-            const label = updateChapter(location, toc);
-            if (label) {
-                locationDisplay.textContent = label;
-            }
-
-        });
-
-        await rendition.display();
-
-        console.log("EPUB loaded:", file.name);
+            await rendition.display();
+        }
 
     } catch (error) {
-        console.error("Failed to load EPUB:", error);
-        locationDisplay.textContent = "Failed to load EPUB";
+
+        console.warn(
+            "Could not restore reading position:",
+            error
+        );
+
+        await rendition.display();
     }
 
-});
+    syncSettingsUI();
+    updateViewModeButton();
+}
 
-// LISTENERS
+// Handle file input change event
+// When a user selects an EPUB file, read it (arrayBuffer) and render it using epub.js
 
-// Settings listeners
-settingsButton.addEventListener("click", () => {
+fileInput.addEventListener(
+    "change",
+    async (event) => {
 
-    settingsPanel.classList.toggle("open");
+        const file =
+            event.target.files[0];
 
-});
+        if (!file) {
+            return;
+        }
 
-closeSettingsButton.addEventListener("click", () => {
+        try {
 
-    settingsPanel.classList.remove("open");
+            const arrayBuffer =
+                await file.arrayBuffer();
 
-});
+            reader.innerHTML = "";
 
-// TOC listeners
-tocButton.addEventListener("click", () => {
+            book = ePub(arrayBuffer);
 
-    tocPanel.classList.toggle("open");
+            const metadata = await readMetadata(book);
 
-});
+            bookTitle.textContent = metadata.title || "Unknown Book";
 
-closeTocButton.addEventListener("click", () => {
+            const navigation = await book.loaded.navigation;
 
-    tocPanel.classList.remove("open");
+            toc = navigation.toc;
 
-});
+            console.log(
+                "EPUB TOC:",
+                toc
+            );
 
-// Button navigation
-previousButton.addEventListener("click", () => {
+            rendition = createRendition();
 
-    if (!rendition) {
-        return;
+            if (!rendition) {
+                throw new Error(
+                    "Could not create EPUB rendition"
+                );
+            }
+
+            syncSettingsUI();
+            updateViewModeButton();
+
+            await rendition.display();
+
+            console.log(
+                "EPUB loaded:",
+                file.name
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Failed to load EPUB:",
+                error
+            );
+
+            locationDisplay.textContent =
+                "Failed to load EPUB";
+        }
     }
+);
 
-    rendition.prev();
-});
+// SETTINGS PANEL
 
-nextButton.addEventListener("click", () => {
+settingsButton.addEventListener(
+    "click",
+    () => {
 
-    if (!rendition) {
-        return;
+        settingsPanel.classList.toggle(
+            "open"
+        );
     }
+);
 
-    rendition.next();
-});
 
-// Keyboard navigation
-document.addEventListener("keydown", (event) => {
+closeSettingsButton.addEventListener(
+    "click",
+    () => {
 
-    if (!rendition) {
-        return;
+        settingsPanel.classList.remove(
+            "open"
+        );
     }
+);
 
-    if (event.key === "ArrowLeft") {
+
+// TOC
+
+tocButton.addEventListener(
+    "click",
+    () => {
+
+        tocPanel.classList.toggle(
+            "open"
+        );
+    }
+);
+
+closeTocButton.addEventListener(
+    "click",
+    () => {
+
+        tocPanel.classList.remove(
+            "open"
+        );
+    }
+);
+
+// VIEW MODE FORMAT
+
+if (viewModeButton) {
+
+    viewModeButton.addEventListener(
+        "click",
+        async () => {
+
+            if (!rendition) {
+                return;
+            }
+
+            const newMode = viewMode === "scrolled-doc" ? "paginated" : "scrolled-doc";
+
+            await setViewMode(
+                newMode
+            );
+        }
+    );
+}
+
+// NAVIGATION BUTTONS
+
+previousButton.addEventListener(
+    "click",
+    () => {
+
+        if (!rendition) {
+            return;
+        }
+
         rendition.prev();
     }
+);
 
-    if (event.key === "ArrowRight") {
+nextButton.addEventListener(
+    "click",
+    () => {
+
+        if (!rendition) {
+            return;
+        }
+
         rendition.next();
     }
-});
+);
 
-// File browser
-browseBtn.addEventListener("click", () => {
-    fileInput.click();
-});
+// KEYBOARD NAVIGATION
 
+document.addEventListener(
+    "keydown",
+    (event) => {
 
+        if (!rendition) {
+            return;
+        }
+
+        if (event.key === "ArrowLeft") {
+            rendition.prev();
+        }
+
+        if (event.key === "ArrowRight") {
+            rendition.next();
+        }
+    }
+);
+
+// FILE BROWSER
+
+browseBtn.addEventListener(
+    "click",
+    () => {
+        fileInput.click();
+    }
+);
 
 // READER SETTINGS
 
-// Font size +
 if (fontIncreaseButton) {
 
     fontIncreaseButton.addEventListener(
@@ -207,14 +439,13 @@ if (fontIncreaseButton) {
                 return;
             }
 
-            increaseFontSize(rendition);
-
+            increaseFontSize(
+                rendition
+            );
         }
     );
-
 }
 
-// Font size -
 if (fontDecreaseButton) {
 
     fontDecreaseButton.addEventListener(
@@ -225,14 +456,13 @@ if (fontDecreaseButton) {
                 return;
             }
 
-            decreaseFontSize(rendition);
-
+            decreaseFontSize(
+                rendition
+            );
         }
     );
-
 }
 
-// Font family
 if (fontFamilySelect) {
 
     fontFamilySelect.addEventListener(
@@ -247,13 +477,10 @@ if (fontFamilySelect) {
                 rendition,
                 event.target.value
             );
-
         }
     );
-
 }
 
-// Line height
 if (lineHeightSelect) {
 
     lineHeightSelect.addEventListener(
@@ -268,13 +495,10 @@ if (lineHeightSelect) {
                 rendition,
                 event.target.value
             );
-
         }
     );
-
 }
 
-// Theme
 if (themeSelect) {
 
     themeSelect.addEventListener(
@@ -289,13 +513,10 @@ if (themeSelect) {
                 rendition,
                 event.target.value
             );
-
         }
     );
-
 }
 
-// Text alignment
 if (textAlignSelect) {
 
     textAlignSelect.addEventListener(
@@ -310,39 +531,61 @@ if (textAlignSelect) {
                 rendition,
                 event.target.value
             );
-
         }
     );
-
 }
 
 if (resetSettingsButton) {
-    resetSettingsButton.addEventListener("click", () => {
-        if (!rendition) {
-            return;
-        }
 
-        resetReaderSettings(rendition);
-        syncSettingsUI();
-    });
+    resetSettingsButton.addEventListener(
+        "click",
+        () => {
+
+            if (!rendition) {
+                return;
+            }
+
+            resetReaderSettings(
+                rendition
+            );
+
+            syncSettingsUI();
+        }
+    );
 }
 
 export function syncSettingsUI() {
-    const settings = getReaderSettings();
+
+    const settings =
+        getReaderSettings();
+
 
     if (fontFamilySelect) {
-        fontFamilySelect.value = settings.fontFamily;
+
+        fontFamilySelect.value =
+            settings.fontFamily;
     }
+
 
     if (lineHeightSelect) {
-        lineHeightSelect.value = String(settings.lineHeight);
+
+        lineHeightSelect.value =
+            String(
+                settings.lineHeight
+            );
     }
+
 
     if (themeSelect) {
-        themeSelect.value = settings.theme;
+
+        themeSelect.value =
+            settings.theme;
     }
 
+
     if (textAlignSelect) {
-        textAlignSelect.value = settings.textAlign;
+
+        textAlignSelect.value =
+            settings.textAlign;
     }
 }
