@@ -9,6 +9,12 @@ const nextButton = document.getElementById("next");
 
 const locationDisplay = document.getElementById("location");
 
+const tocButton = document.getElementById("tocButton");
+const closeTocButton = document.getElementById("closeToc");
+
+const tocPanel = document.getElementById("toc");
+const tocList = document.getElementById("tocList");
+
 let book = null;
 let rendition = null;
 
@@ -33,6 +39,7 @@ fileInput.addEventListener("change", async (event) => {
         // get an array of objects representing the table of contents of the EPUB file
         const navigation = await book.loaded.navigation;
         toc = navigation.toc;
+        renderToc(toc);
         console.log("EPUB TOC:", toc);
 
         rendition = book.renderTo(reader, {
@@ -85,8 +92,6 @@ function updateChapter(location) {
 
 }
 
-
-
 // find matching TOC entry (helper function for updateChapter)
 function findTocEntry(href, entries) {
 
@@ -121,6 +126,67 @@ function findTocEntry(href, entries) {
     return null;
 
 }
+
+// Render the table of contents (TOC) in the TOC panel
+function renderToc(entries, container = tocList) {
+
+    container.innerHTML = "";
+
+    for (const entry of entries) {
+
+        const button = document.createElement("button");
+
+        button.className = "toc-entry";
+
+        button.textContent = entry.label;
+
+        button.addEventListener("click", async () => {
+
+            if (!rendition) {
+                return;
+            }
+
+            await rendition.display(entry.href);
+
+            // Close TOC after selecting a chapter
+            tocPanel.classList.remove("open");
+
+        });
+
+        container.appendChild(button);
+
+
+        // Nested TOC entries
+        if (entry.subitems && entry.subitems.length > 0) {
+
+            const children = document.createElement("div");
+
+            children.className = "toc-children";
+
+            container.appendChild(children);
+
+            renderToc(
+                entry.subitems,
+                children
+            );
+
+        }
+
+    }
+
+}
+
+tocButton.addEventListener("click", () => {
+
+    tocPanel.classList.toggle("open");
+
+});
+
+closeTocButton.addEventListener("click", () => {
+
+    tocPanel.classList.remove("open");
+
+});
 
 // Button navigation
 previousButton.addEventListener("click", () => {

@@ -4,4 +4,4 @@
 
 <h1 align="center">Book Garden</h1>
 
-EPUB reader and personal library that runs entirely in your browser.
+EPUB reader and personal library (not yet implemented) that runs entirely in your browser.
