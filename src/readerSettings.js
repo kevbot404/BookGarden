@@ -97,7 +97,7 @@ export function applyReaderSettings(rendition) {
         },
 
         a: {
-            "color": theme === themes.dark
+            "color": settings.theme === "dark"
                 ? "#8ab4f8 !important"
                 : "#4169e1 !important"
         },

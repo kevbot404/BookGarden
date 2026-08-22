@@ -95,10 +95,12 @@ fileInput.addEventListener("change", async (event) => {
         rendition = book.renderTo(reader, {
             width: "100%",
             height: "100%",
-            flow: "paginated"
+            flow: "scrolled-doc"
         });
         
         applyReaderSettings(rendition);
+
+        syncSettingsUI();
 
         renderToc(toc, tocList, tocPanel, rendition);
 
@@ -314,38 +316,33 @@ if (textAlignSelect) {
 
 }
 
-// Reset
 if (resetSettingsButton) {
-
-    resetSettingsButton.addEventListener(
-        "click",
-        () => {
-
-            if (!rendition) {
-                return;
-            }
-
-            resetReaderSettings(rendition);
-
-            // Reset UI controls too
-            if (fontFamilySelect) {
-                fontFamilySelect.value =
-                    "Georgia, serif";
-            }
-
-            if (lineHeightSelect) {
-                lineHeightSelect.value = "1.6";
-            }
-
-            if (themeSelect) {
-                themeSelect.value = "light";
-            }
-
-            if (textAlignSelect) {
-                textAlignSelect.value = "left";
-            }
-
+    resetSettingsButton.addEventListener("click", () => {
+        if (!rendition) {
+            return;
         }
-    );
 
+        resetReaderSettings(rendition);
+        syncSettingsUI();
+    });
+}
+
+export function syncSettingsUI() {
+    const settings = getReaderSettings();
+
+    if (fontFamilySelect) {
+        fontFamilySelect.value = settings.fontFamily;
+    }
+
+    if (lineHeightSelect) {
+        lineHeightSelect.value = String(settings.lineHeight);
+    }
+
+    if (themeSelect) {
+        themeSelect.value = settings.theme;
+    }
+
+    if (textAlignSelect) {
+        textAlignSelect.value = settings.textAlign;
+    }
 }
