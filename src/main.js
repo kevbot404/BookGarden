@@ -4,6 +4,11 @@ import "./style.css";
 const fileInput = document.getElementById("epubFile");
 const reader = document.getElementById("reader");
 
+const previousButton = document.getElementById("previous");
+const nextButton = document.getElementById("next");
+
+const locationDisplay = document.getElementById("location");
+
 let book = null;
 let rendition = null;
 
@@ -29,12 +34,71 @@ fileInput.addEventListener("change", async (event) => {
             flow: "paginated"
         });
 
+        rendition.on("relocated", (location) => {
+
+            updateChapter(location);
+
+        });
+
         await rendition.display();
 
         console.log("EPUB loaded:", file.name);
 
     } catch (error) {
         console.error("Failed to load EPUB:", error);
+        locationDisplay.textContent = "Failed to load EPUB";
     }
 
+});
+
+// Update chapter display based on the current location
+function updateChapter(location) {
+
+    if (!location || !location.start) {
+        return;
+    }
+
+    const index = location.start.index;
+
+    if (index === undefined) {
+        return;
+    }
+
+    locationDisplay.textContent = `Chapter ${index + 1}`;
+
+}
+
+// Button navigation
+previousButton.addEventListener("click", () => {
+
+    if (!rendition) {
+        return;
+    }
+
+    rendition.prev();
+});
+
+nextButton.addEventListener("click", () => {
+
+    if (!rendition) {
+        return;
+    }
+
+    rendition.next();
+});
+
+// Keyboard navigation
+document.addEventListener("keydown", (event) => {
+
+    if (!rendition) {
+        return;
+    }
+
+    if (event.key === "ArrowLeft") {
+        rendition.prev();
+    }
+
+    if (event.key === "ArrowRight") {
+        rendition.next();
+    }
 });
