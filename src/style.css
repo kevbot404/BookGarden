@@ -1,92 +1,259 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --forest-green: #2d4a22;
+    --sage-green: #6b8f71;
+    --moss-green: #3e6b4f;
+    --soft-sage: #a8c5a0;
+    --cream: #faf8f3;
+    --warm-white: #fefdfb;
+    --earth-brown: #6b5b4a;
+    --terracotta: #c17f59;
+    --soft-shadow: rgba(45, 74, 34, 0.1);
+    --deep-shadow: rgba(45, 74, 34, 0.2);
 }
 
 html,
 body {
-    margin: 0;
     width: 100%;
     height: 100%;
-}
-
-body {
-    font-family: Arial, sans-serif;
-
-    background: #222;
-    color: white;
-
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--cream) 0%, #f0ede6 100%);
+    color: var(--forest-green);
     display: flex;
     flex-direction: column;
 }
 
-
-/* ========================================
-   Header
-======================================== */
-
+/* Header */
 header {
-    height: 60px;
+    height: 64px;
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
-
     gap: 20px;
+    padding: 0 24px;
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--moss-green) 100%);
+    box-shadow: 0 2px 12px var(--deep-shadow);
+    position: relative;
+    overflow: hidden;
+}
 
-    padding: 0 20px;
+header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--sage-green) 0%, transparent 70%);
+    opacity: 0.3;
+    border-radius: 50%;
+}
 
-    background: #111;
+header::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: 5%;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, var(--soft-sage) 0%, transparent 70%);
+    opacity: 0.2;
+    border-radius: 50%;
 }
 
 header h1 {
     margin: 0;
-
-    font-size: 20px;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--warm-white);
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
 }
 
+header h1::before {
+    content: '🌿 ';
+    margin-right: 6px;
+}
 
-/* ========================================
-   Main reader
-======================================== */
+#epubFile {
+    padding: 8px 14px;
+    border: 2px solid var(--sage-green);
+    border-radius: 20px;
+    background: var(--warm-white);
+    color: var(--forest-green);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
 
+#epubFile:hover {
+    border-color: var(--soft-sage);
+    box-shadow: 0 2px 8px var(--soft-shadow);
+    transform: translateY(-1px);
+}
+
+#epubFile::file-selector-button {
+    padding: 5px 12px;
+    margin-right: 8px;
+    border: none;
+    border-radius: 14px;
+    background: var(--sage-green);
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#epubFile::file-selector-button:hover {
+    background: var(--moss-green);
+}
+
+/* Main */
 main {
     flex: 1;
-
     min-height: 0;
-
-    padding: 20px;
+    padding: 24px;
+    overflow: auto;
 }
 
 #reader {
     width: 100%;
     height: 100%;
-
-    background: white;
+    background: var(--warm-white);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--soft-shadow), 0 1px 3px var(--shadow);
+    padding: 40px;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid rgba(107, 143, 113, 0.15);
 }
 
-/* ========================================
-   Buttons
-======================================== */
+#reader::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--sage-green), var(--soft-sage), var(--sage-green));
+    border-radius: 16px 16px 0 0;
+    opacity: 0.6;
+}
 
-button {
-    padding: 8px 16px;
+/* Footer */
+footer {
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: var(--warm-white);
+    border-top: 1px solid rgba(107, 143, 113, 0.2);
+    box-shadow: 0 -2px 8px var(--soft-shadow);
+}
 
-    border: none;
-    border-radius: 4px;
-
-    background: #444;
-    color: white;
-
-    cursor: pointer;
-
+#location {
     font-size: 14px;
+    color: var(--earth-brown);
+    font-style: italic;
+    padding: 6px 16px;
+    background: var(--cream);
+    border-radius: 20px;
+    border: 1px solid rgba(107, 143, 113, 0.2);
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--sage-green) 0%, var(--moss-green) 100%);
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px var(--soft-shadow);
 }
 
 button:hover {
-    background: #555;
+    background: linear-gradient(135deg, var(--moss-green) 0%, var(--forest-green) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--deep-shadow);
 }
 
 button:active {
-    background: #666;
+    transform: translateY(0);
+    box-shadow: 0 1px 4px var(--soft-shadow);
 }
 
+button:disabled {
+    background: #b8c4b5;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Scrollbar styling */
+#reader::-webkit-scrollbar {
+    width: 10px;
+}
+
+#reader::-webkit-scrollbar-track {
+    background: var(--cream);
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+#reader::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--sage-green), var(--moss-green));
+    border-radius: 10px;
+    border: 2px solid var(--cream);
+}
+
+#reader::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--moss-green), var(--forest-green));
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header {
+        padding: 0 16px;
+        gap: 12px;
+    }
+
+    header h1 {
+        font-size: 18px;
+    }
+
+    main {
+        padding: 16px;
+    }
+
+    #reader {
+        padding: 24px;
+        border-radius: 12px;
+    }
+
+    footer {
+        gap: 10px;
+        padding: 0 12px;
+    }
+
+    button {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
