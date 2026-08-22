@@ -109,7 +109,7 @@ function createRendition() {
     reader.innerHTML = "";
 
     const newRendition = book.renderTo(reader, {
-        width: "100%",
+        width: viewMode === "scrolled-doc" ? "50%" : "100%",
         height: "100%",
         flow: viewMode
     });
