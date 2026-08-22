@@ -1,6 +1,17 @@
 import ePub from "epubjs";
 import "./style.css";
 import { updateChapter, findTocEntry, renderToc, readMetadata } from "./helpers.js";
+import {
+    applyReaderSettings,
+    increaseFontSize,
+    decreaseFontSize,
+    setFontFamily,
+    setLineHeight,
+    setTheme,
+    setTextAlign,
+    resetReaderSettings,
+    getReaderSettings
+} from "./readerSettings.js";
 
 const fileInput = document.getElementById("epubFile");
 
@@ -20,6 +31,28 @@ const closeTocButton = document.getElementById("closeToc");
 
 const tocPanel = document.getElementById("toc");
 const tocList = document.getElementById("tocList");
+
+
+const fontIncreaseButton =
+    document.getElementById("fontIncrease");
+
+const fontDecreaseButton =
+    document.getElementById("fontDecrease");
+
+const fontFamilySelect =
+    document.getElementById("fontFamily");
+
+const lineHeightSelect =
+    document.getElementById("lineHeight");
+
+const themeSelect =
+    document.getElementById("theme");
+
+const textAlignSelect =
+    document.getElementById("textAlign");
+
+const resetSettingsButton =
+    document.getElementById("resetSettings");
 
 
 
@@ -59,6 +92,8 @@ fileInput.addEventListener("change", async (event) => {
             height: "100%",
             flow: "paginated"
         });
+        
+        applyReaderSettings(rendition);
 
         renderToc(toc, tocList, tocPanel, rendition);
 
@@ -82,6 +117,7 @@ fileInput.addEventListener("change", async (event) => {
 
 });
 
+// TOC listeners
 tocButton.addEventListener("click", () => {
 
     tocPanel.classList.toggle("open");
@@ -129,6 +165,167 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
+// File browser
 browseBtn.addEventListener("click", () => {
     fileInput.click();
 });
+
+
+
+// READER SETTINGS
+
+// Font size +
+if (fontIncreaseButton) {
+
+    fontIncreaseButton.addEventListener(
+        "click",
+        () => {
+
+            if (!rendition) {
+                return;
+            }
+
+            increaseFontSize(rendition);
+
+        }
+    );
+
+}
+
+// Font size -
+if (fontDecreaseButton) {
+
+    fontDecreaseButton.addEventListener(
+        "click",
+        () => {
+
+            if (!rendition) {
+                return;
+            }
+
+            decreaseFontSize(rendition);
+
+        }
+    );
+
+}
+
+// Font family
+if (fontFamilySelect) {
+
+    fontFamilySelect.addEventListener(
+        "change",
+        (event) => {
+
+            if (!rendition) {
+                return;
+            }
+
+            setFontFamily(
+                rendition,
+                event.target.value
+            );
+
+        }
+    );
+
+}
+
+// Line height
+if (lineHeightSelect) {
+
+    lineHeightSelect.addEventListener(
+        "change",
+        (event) => {
+
+            if (!rendition) {
+                return;
+            }
+
+            setLineHeight(
+                rendition,
+                event.target.value
+            );
+
+        }
+    );
+
+}
+
+// Theme
+if (themeSelect) {
+
+    themeSelect.addEventListener(
+        "change",
+        (event) => {
+
+            if (!rendition) {
+                return;
+            }
+
+            setTheme(
+                rendition,
+                event.target.value
+            );
+
+        }
+    );
+
+}
+
+// Text alignment
+if (textAlignSelect) {
+
+    textAlignSelect.addEventListener(
+        "change",
+        (event) => {
+
+            if (!rendition) {
+                return;
+            }
+
+            setTextAlign(
+                rendition,
+                event.target.value
+            );
+
+        }
+    );
+
+}
+
+// Reset
+if (resetSettingsButton) {
+
+    resetSettingsButton.addEventListener(
+        "click",
+        () => {
+
+            if (!rendition) {
+                return;
+            }
+
+            resetReaderSettings(rendition);
+
+            // Reset UI controls too
+            if (fontFamilySelect) {
+                fontFamilySelect.value =
+                    "Georgia, serif";
+            }
+
+            if (lineHeightSelect) {
+                lineHeightSelect.value = "1.6";
+            }
+
+            if (themeSelect) {
+                themeSelect.value = "light";
+            }
+
+            if (textAlignSelect) {
+                textAlignSelect.value = "left";
+            }
+
+        }
+    );
+
+}
