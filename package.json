@@ -17,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/kevbot404/BookGarden/issues"
   },
-  "homepage": "https://github.com/kevbot404/BookGarden#readme"
+  "homepage": "https://github.com/kevbot404/BookGarden#readme",
+  "dependencies": {
+    "epubjs": "^0.3.93"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
 }
