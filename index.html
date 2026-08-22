@@ -37,77 +37,87 @@
 
     <!-- Reader settings -->
     <section id="readerSettings" class="reader-settings">
-      <div class="setting-group">
-        <label for="fontFamily"> Font </label>
+      <div class="reader-settings-header">
+        <h2>Settings</h2>
 
-        <select id="fontFamily">
-          <option value="Georgia, serif">Georgia</option>
-
-          <option value="Arial, sans-serif">Arial</option>
-
-          <option value="Verdana, sans-serif">Verdana</option>
-
-          <option value="'Times New Roman', serif">Times New Roman</option>
-
-          <option value="system-ui, sans-serif">System</option>
-        </select>
+        <button id="closeSettings" type="button">×</button>
       </div>
 
-      <div class="setting-group">
-        <span>Font size</span>
+      <div class="reader-settings-body">
+        <div class="setting-group">
+          <label for="fontFamily"> Font </label>
 
-        <button id="fontDecrease" type="button">A−</button>
+          <select id="fontFamily">
+            <option value="Georgia, serif">Georgia</option>
 
-        <button id="fontIncrease" type="button">A+</button>
+            <option value="Arial, sans-serif">Arial</option>
+
+            <option value="Verdana, sans-serif">Verdana</option>
+
+            <option value="'Times New Roman', serif">Times New Roman</option>
+
+            <option value="system-ui, sans-serif">System</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <span>Font size</span>
+
+          <button id="fontDecrease" type="button">A−</button>
+
+          <button id="fontIncrease" type="button">A+</button>
+        </div>
+
+        <div class="setting-group">
+          <label for="lineHeight"> Line spacing </label>
+
+          <select id="lineHeight">
+            <option value="1.2">Compact</option>
+
+            <option value="1.4">Normal</option>
+
+            <option value="1.6" selected>Comfortable</option>
+
+            <option value="1.8">Spacious</option>
+
+            <option value="2">Very spacious</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <label for="theme"> Theme </label>
+
+          <select id="theme">
+            <option value="light">Light</option>
+
+            <option value="sepia">Sepia</option>
+
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+
+        <div class="setting-group">
+          <label for="textAlign"> Alignment </label>
+
+          <select id="textAlign">
+            <option value="left">Left</option>
+
+            <option value="justify">Justified</option>
+
+            <option value="center">Center</option>
+
+            <option value="right">Right</option>
+          </select>
+        </div>
+
+        <button id="resetSettings" type="button">Reset</button>
       </div>
-
-      <div class="setting-group">
-        <label for="lineHeight"> Line spacing </label>
-
-        <select id="lineHeight">
-          <option value="1.2">Compact</option>
-
-          <option value="1.4">Normal</option>
-
-          <option value="1.6" selected>Comfortable</option>
-
-          <option value="1.8">Spacious</option>
-
-          <option value="2">Very spacious</option>
-        </select>
-      </div>
-
-      <div class="setting-group">
-        <label for="theme"> Theme </label>
-
-        <select id="theme">
-          <option value="light">Light</option>
-
-          <option value="sepia">Sepia</option>
-
-          <option value="dark">Dark</option>
-        </select>
-      </div>
-
-      <div class="setting-group">
-        <label for="textAlign"> Alignment </label>
-
-        <select id="textAlign">
-          <option value="left">Left</option>
-
-          <option value="justify">Justified</option>
-
-          <option value="center">Center</option>
-
-          <option value="right">Right</option>
-        </select>
-      </div>
-
-      <button id="resetSettings" type="button">Reset</button>
     </section>
 
     <footer>
       <button id="tocButton" type="button">☰ Contents</button>
+
+      <button id="settingsButton" type="button">⚙ Settings</button>
 
       <button id="previous" type="button">← Previous</button>
 

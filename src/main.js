@@ -32,6 +32,11 @@ const closeTocButton = document.getElementById("closeToc");
 const tocPanel = document.getElementById("toc");
 const tocList = document.getElementById("tocList");
 
+const settingsButton = document.getElementById("settingsButton");
+const closeSettingsButton = document.getElementById("closeSettings");
+
+const settingsPanel = document.getElementById("readerSettings");
+
 
 const fontIncreaseButton =
     document.getElementById("fontIncrease");
@@ -114,6 +119,21 @@ fileInput.addEventListener("change", async (event) => {
         console.error("Failed to load EPUB:", error);
         locationDisplay.textContent = "Failed to load EPUB";
     }
+
+});
+
+// LISTENERS
+
+// Settings listeners
+settingsButton.addEventListener("click", () => {
+
+    settingsPanel.classList.toggle("open");
+
+});
+
+closeSettingsButton.addEventListener("click", () => {
+
+    settingsPanel.classList.remove("open");
 
 });
 

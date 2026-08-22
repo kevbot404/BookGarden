@@ -393,6 +393,149 @@ button:disabled {
     padding-left: 15px;
 }
 
+
+/* ========================================
+   Reader Settings
+======================================== */
+
+.reader-settings {
+    position: absolute;
+
+    right: 20px;
+    top: 80px;
+    bottom: 80px;
+
+    width: 280px;
+
+    background: var(--warm-white);
+
+    border-radius: 16px;
+    border: 1px solid rgba(107, 143, 113, 0.2);
+
+    box-shadow: 0 4px 20px var(--soft-shadow);
+
+    z-index: 100;
+
+    display: none;
+
+    flex-direction: column;
+}
+
+.reader-settings.open {
+    display: flex;
+}
+
+.reader-settings-header {
+    height: 50px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 15px;
+
+    border-bottom: 1px solid rgba(107, 143, 113, 0.2);
+}
+
+.reader-settings-header h2 {
+    margin: 0;
+
+    font-size: 18px;
+    color: var(--forest-green);
+}
+
+#closeSettings {
+    padding: 4px 10px;
+
+    font-size: 20px;
+    color: var(--earth-brown);
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#closeSettings:hover {
+    background: rgba(107, 143, 113, 0.1);
+    color: var(--forest-green);
+}
+
+.reader-settings-body {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.setting-group label,
+.setting-group span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--earth-brown);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.setting-group select {
+    padding: 8px 12px;
+
+    border: 1px solid rgba(107, 143, 113, 0.3);
+    border-radius: 10px;
+
+    background: var(--cream);
+
+    color: var(--forest-green);
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.setting-group select:focus {
+    outline: none;
+    border-color: var(--sage-green);
+    box-shadow: 0 0 0 3px rgba(107, 143, 113, 0.1);
+}
+
+.setting-group button {
+    padding: 6px 14px;
+
+    font-size: 13px;
+
+    border-radius: 10px;
+}
+
+#resetSettings {
+    margin-top: auto;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    background: linear-gradient(135deg, var(--terracotta) 0%, #a86842 100%);
+}
+
+#resetSettings:hover {
+    background: linear-gradient(135deg, #a86842 0%, #8a5535 100%);
+}
+
 #bookTitle {
     flex: 1;
 
