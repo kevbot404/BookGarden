@@ -2,7 +2,16 @@ import ePub from "epubjs";
 import "./style.css";
 
 const fileInput = document.getElementById("epubFile");
+
+const browseBtn = document.getElementById("browseBtn");
+
+browseBtn.addEventListener("click", () => {
+    fileInput.click();
+});
+
 const reader = document.getElementById("reader");
+
+const bookTitle = document.getElementById("bookTitle");
 
 const previousButton = document.getElementById("previous");
 const nextButton = document.getElementById("next");
@@ -14,6 +23,8 @@ const closeTocButton = document.getElementById("closeToc");
 
 const tocPanel = document.getElementById("toc");
 const tocList = document.getElementById("tocList");
+
+
 
 let book = null;
 let rendition = null;
@@ -35,6 +46,11 @@ fileInput.addEventListener("change", async (event) => {
         reader.innerHTML = "";
 
         book = ePub(arrayBuffer);
+
+        const metadata = await readMetadata(book);
+
+        bookTitle.textContent =
+            metadata.title || "Unknown Book";
 
         // get an array of objects representing the table of contents of the EPUB file
         const navigation = await book.loaded.navigation;
@@ -222,3 +238,9 @@ document.addEventListener("keydown", (event) => {
         rendition.next();
     }
 });
+
+async function readMetadata(book) {
+    const metadata = await book.loaded.metadata;
+    console.log("EPUB metadata:", metadata);
+    return metadata;
+}
