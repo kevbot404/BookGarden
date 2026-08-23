@@ -24,6 +24,12 @@ import {
     getReaderSettings
 } from "./readerSettings.js";
 
+const FIRST_LAUNCH_KEY = "bookgarden-initialized";
+
+if (!localStorage.getItem(FIRST_LAUNCH_KEY)) {
+    localStorage.setItem(FIRST_LAUNCH_KEY, "true");
+    window.location.href = "library.html";
+}
 
 const fileInput = document.getElementById("epubFile");
 const browseBtn = document.getElementById("browseBtn");
