@@ -5,7 +5,9 @@ const settings = {
     fontSize: 18,
     lineHeight: 1.6,
     theme: "light",
-    textAlign: "left"
+    textAlign: "left",
+    readerWidth: "100%",
+    readerHeight: "100%"
 };
 
 
@@ -237,6 +239,28 @@ export function setTextAlign(rendition, alignment) {
 
 
 /**
+ * Set reader width
+ */
+export function setReaderWidth(rendition, width) {
+    settings.readerWidth = width;
+
+    applyReaderSettings(rendition);
+    rendition.resize(width, settings.readerHeight);
+}
+
+
+/**
+ * Set reader height
+ */
+export function setReaderHeight(rendition, height) {
+    settings.readerHeight = height;
+
+    applyReaderSettings(rendition);
+    rendition.resize(settings.readerWidth, height);
+}
+
+
+/**
  * Get current settings
  */
 export function getReaderSettings() {
@@ -255,6 +279,8 @@ export function resetReaderSettings(rendition) {
     settings.lineHeight = 1.6;
     settings.theme = "light";
     settings.textAlign = "left";
+    settings.readerWidth = "100%";
+    settings.readerHeight = "100%";
 
     applyReaderSettings(rendition);
     applyPageTheme("light");

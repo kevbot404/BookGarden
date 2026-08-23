@@ -16,6 +16,8 @@ import {
     setLineHeight,
     setTheme,
     setTextAlign,
+    setReaderWidth,
+    setReaderHeight,
     resetReaderSettings,
     getReaderSettings
 } from "./readerSettings.js";
@@ -91,6 +93,12 @@ const themeSelect =
 const textAlignSelect =
     document.getElementById("textAlign");
 
+const readerWidthSelect =
+    document.getElementById("readerWidth");
+
+const readerHeightSelect =
+    document.getElementById("readerHeight");
+
 const resetSettingsButton =
     document.getElementById("resetSettings");
 
@@ -106,11 +114,13 @@ function createRendition() {
         return null;
     }
 
+    const settings = getReaderSettings();
+
     reader.innerHTML = "";
 
     const newRendition = book.renderTo(reader, {
-        width: viewMode === "scrolled-doc" ? "50%" : "100%",
-        height: "100%",
+        width: settings.readerWidth,
+        height: settings.readerHeight,
         flow: viewMode
     });
 
@@ -145,7 +155,7 @@ function updateViewModeButton() {
     if (viewMode === "scrolled-doc") {
 
         viewModeButton.textContent =
-            "Change to Double Pages format";
+            "Change to Pages format";
 
         viewModeButton.title =
             "Switch to page view";
@@ -535,6 +545,42 @@ if (textAlignSelect) {
     );
 }
 
+if (readerWidthSelect) {
+
+    readerWidthSelect.addEventListener(
+        "change",
+        (event) => {
+
+            if (!rendition) {
+                return;
+            }
+
+            setReaderWidth(
+                rendition,
+                event.target.value
+            );
+        }
+    );
+}
+
+if (readerHeightSelect) {
+
+    readerHeightSelect.addEventListener(
+        "change",
+        (event) => {
+
+            if (!rendition) {
+                return;
+            }
+
+            setReaderHeight(
+                rendition,
+                event.target.value
+            );
+        }
+    );
+}
+
 if (resetSettingsButton) {
 
     resetSettingsButton.addEventListener(
@@ -587,5 +633,17 @@ function syncSettingsUI() {
 
         textAlignSelect.value =
             settings.textAlign;
+    }
+
+    if (readerWidthSelect) {
+
+        readerWidthSelect.value =
+            settings.readerWidth;
+    }
+
+    if (readerHeightSelect) {
+
+        readerHeightSelect.value =
+            settings.readerHeight;
     }
 }
