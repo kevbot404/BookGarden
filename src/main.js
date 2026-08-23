@@ -23,93 +23,41 @@ import {
 } from "./readerSettings.js";
 
 
-const fileInput =
-    document.getElementById("epubFile");
+const fileInput = document.getElementById("epubFile");
+const browseBtn = document.getElementById("browseBtn");
+const reader = document.getElementById("reader");
+const bookTitle = document.getElementById("bookTitle");
+const previousButton = document.getElementById("previous");
+const nextButton = document.getElementById("next");
+const locationDisplay = document.getElementById("location");
+const tocButton = document.getElementById("tocButton");
+const closeTocButton = document.getElementById("closeToc");
+const tocPanel = document.getElementById("toc");
+const tocList = document.getElementById("tocList");
+const settingsButton = document.getElementById("settingsButton");
+const closeSettingsButton = document.getElementById("closeSettings");
+const settingsPanel = document.getElementById("readerSettings");
+const viewModeButton = document.getElementById("viewModeButton");
 
-const browseBtn =
-    document.getElementById("browseBtn");
-
-const reader =
-    document.getElementById("reader");
-
-const bookTitle =
-    document.getElementById("bookTitle");
-
-
-const previousButton =
-    document.getElementById("previous");
-
-const nextButton =
-    document.getElementById("next");
-
-
-const locationDisplay =
-    document.getElementById("location");
-
-
-const tocButton =
-    document.getElementById("tocButton");
-
-const closeTocButton =
-    document.getElementById("closeToc");
-
-const tocPanel =
-    document.getElementById("toc");
-
-const tocList =
-    document.getElementById("tocList");
-
-
-const settingsButton =
-    document.getElementById("settingsButton");
-
-const closeSettingsButton =
-    document.getElementById("closeSettings");
-
-const settingsPanel =
-    document.getElementById("readerSettings");
-
-const viewModeButton =
-    document.getElementById("viewModeButton");
-
-
-// Reader settings controls
-
-const fontIncreaseButton =
-    document.getElementById("fontIncrease");
-
-const fontDecreaseButton =
-    document.getElementById("fontDecrease");
-
-const fontFamilySelect =
-    document.getElementById("fontFamily");
-
-const lineHeightSelect =
-    document.getElementById("lineHeight");
-
-const themeSelect =
-    document.getElementById("theme");
-
-const textAlignSelect =
-    document.getElementById("textAlign");
-
-const readerWidthSelect =
-    document.getElementById("readerWidth");
-
-const readerHeightSelect =
-    document.getElementById("readerHeight");
-
-const resetSettingsButton =
-    document.getElementById("resetSettings");
-
+const fontIncreaseButton = document.getElementById("fontIncrease");
+const fontDecreaseButton = document.getElementById("fontDecrease");
+const fontFamilySelect = document.getElementById("fontFamily");
+const lineHeightSelect = document.getElementById("lineHeight");
+const themeSelect = document.getElementById("theme");
+const textAlignSelect = document.getElementById("textAlign");
+const readerWidthSelect = document.getElementById("readerWidth");
+const readerHeightSelect = document.getElementById("readerHeight");
+const resetSettingsButton = document.getElementById("resetSettings");
 
 let book = null;
 let rendition = null;
 let toc = [];
 let viewMode = "scrolled-doc";
 
+// Create a new rendition of the book and render it to the reader element
+// Apply the current reader settings to the rendition, and set up event listeners for location changes
+// and TOC rendering
 function createRendition() {
-
     if (!book) {
         return null;
     }
@@ -126,53 +74,37 @@ function createRendition() {
 
     applyReaderSettings(newRendition);
 
-    newRendition.on("relocated",
-        (location) => {
-            const label = updateChapter(location, toc);
-
-            if (label) {
-                locationDisplay.textContent = label;
-            }
+    newRendition.on("relocated", (location) => {
+        const label = updateChapter(location, toc);
+        if (label) {
+            locationDisplay.textContent = label;
         }
-    );
+    });
 
-    renderToc(
-        toc,
-        tocList,
-        tocPanel,
-        newRendition
-    );
+    renderToc(toc, tocList, tocPanel, newRendition);
 
     return newRendition;
 }
 
+// Update the view mode button text and title based on the current view mode.
+// should probably just make it a 'switch view mode' button instead.
 function updateViewModeButton() {
-
     if (!viewModeButton) {
         return;
     }
 
     if (viewMode === "scrolled-doc") {
-
-        viewModeButton.textContent =
-            "Change to Pages format";
-
-        viewModeButton.title =
-            "Switch to page view";
-
+        viewModeButton.textContent = "Change to Pages format";
+        viewModeButton.title = "Switch to page view";
     } else {
-
-        viewModeButton.textContent =
-            "Change to Scrolled format";
-
-        viewModeButton.title =
-            "Switch to scroll view";
+        viewModeButton.textContent = "Change to Scrolled format";
+        viewModeButton.title = "Switch to scroll view";
     }
 }
 
-
+// Set the view mode (scrolled-doc or paginated)
+// and re-render the book while preserving the current reading position
 async function setViewMode(mode) {
-
     if (!book || !rendition) {
         return;
     }
@@ -180,37 +112,18 @@ async function setViewMode(mode) {
     let currentCfi = null;
 
     try {
-
-        const currentLocation =
-            rendition.currentLocation();
-
-        if (
-            currentLocation &&
-            currentLocation.start &&
-            currentLocation.start.cfi
-        ) {
-            currentCfi =
-                currentLocation.start.cfi;
+        const currentLocation = rendition.currentLocation();
+        if (currentLocation && currentLocation.start && currentLocation.start.cfi) {
+            currentCfi = currentLocation.start.cfi;
         }
-
     } catch (error) {
-
-        console.warn(
-            "Could not save current location:",
-            error
-        );
+        console.warn("Could not save current location:", error);
     }
 
     try {
-
         rendition.destroy();
-
     } catch (error) {
-
-        console.warn(
-            "Could not destroy old rendition:",
-            error
-        );
+        console.warn("Could not destroy old rendition:", error);
     }
 
     viewMode = mode;
@@ -222,25 +135,13 @@ async function setViewMode(mode) {
     }
 
     try {
-
         if (currentCfi) {
-
-            await rendition.display(
-                currentCfi
-            );
-
+            await rendition.display(currentCfi);
         } else {
-
             await rendition.display();
         }
-
     } catch (error) {
-
-        console.warn(
-            "Could not restore reading position:",
-            error
-        );
-
+        console.warn("Could not restore reading position:", error);
         await rendition.display();
     }
 
@@ -250,400 +151,161 @@ async function setViewMode(mode) {
 
 // Handle file input change event
 // When a user selects an EPUB file, read it (arrayBuffer) and render it using epub.js
+// get toc, metadata, sync settings UI, update view mode button
+fileInput.addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
 
-fileInput.addEventListener(
-    "change",
-    async (event) => {
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        reader.innerHTML = "";
+        book = ePub(arrayBuffer);
 
-        const file =
-            event.target.files[0];
+        const metadata = await readMetadata(book);
+        bookTitle.textContent = metadata.title || "Unknown Book";
 
-        if (!file) {
-            return;
+        const navigation = await book.loaded.navigation;
+        toc = navigation.toc;
+
+        console.log("EPUB TOC:", toc);
+
+        rendition = createRendition();
+
+        if (!rendition) {
+            throw new Error("Could not create EPUB rendition");
         }
 
-        try {
+        syncSettingsUI();
+        updateViewModeButton();
 
-            const arrayBuffer =
-                await file.arrayBuffer();
+        await rendition.display();
 
-            reader.innerHTML = "";
-
-            book = ePub(arrayBuffer);
-
-            const metadata = await readMetadata(book);
-
-            bookTitle.textContent = metadata.title || "Unknown Book";
-
-            const navigation = await book.loaded.navigation;
-
-            toc = navigation.toc;
-
-            console.log(
-                "EPUB TOC:",
-                toc
-            );
-
-            rendition = createRendition();
-
-            if (!rendition) {
-                throw new Error(
-                    "Could not create EPUB rendition"
-                );
-            }
-
-            syncSettingsUI();
-            updateViewModeButton();
-
-            await rendition.display();
-
-            console.log(
-                "EPUB loaded:",
-                file.name
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Failed to load EPUB:",
-                error
-            );
-
-            locationDisplay.textContent =
-                "Failed to load EPUB";
-        }
+        console.log("EPUB loaded:", file.name);
+    } catch (error) {
+        console.error("Failed to load EPUB:", error);
+        locationDisplay.textContent = "Failed to load EPUB";
     }
-);
+});
 
-// SETTINGS PANEL
+// settings panel buttons
+settingsButton.addEventListener("click", () => {
+    settingsPanel.classList.toggle("open");
+});
 
-settingsButton.addEventListener(
-    "click",
-    () => {
+closeSettingsButton.addEventListener("click", () => {
+    settingsPanel.classList.remove("open");
+});
 
-        settingsPanel.classList.toggle(
-            "open"
-        );
-    }
-);
+// table of contents panel buttons
+tocButton.addEventListener("click", () => {
+    tocPanel.classList.toggle("open");
+});
 
+closeTocButton.addEventListener("click", () => {
+    tocPanel.classList.remove("open");
+});
 
-closeSettingsButton.addEventListener(
-    "click",
-    () => {
-
-        settingsPanel.classList.remove(
-            "open"
-        );
-    }
-);
-
-
-// TOC
-
-tocButton.addEventListener(
-    "click",
-    () => {
-
-        tocPanel.classList.toggle(
-            "open"
-        );
-    }
-);
-
-closeTocButton.addEventListener(
-    "click",
-    () => {
-
-        tocPanel.classList.remove(
-            "open"
-        );
-    }
-);
-
-// VIEW MODE FORMAT
-
+// view mode button; scrolled, pages
 if (viewModeButton) {
-
-    viewModeButton.addEventListener(
-        "click",
-        async () => {
-
-            if (!rendition) {
-                return;
-            }
-
-            const newMode = viewMode === "scrolled-doc" ? "paginated" : "scrolled-doc";
-
-            await setViewMode(
-                newMode
-            );
-        }
-    );
-}
-
-// NAVIGATION BUTTONS
-
-previousButton.addEventListener(
-    "click",
-    () => {
-
+    viewModeButton.addEventListener("click", async () => {
         if (!rendition) {
             return;
         }
+        const newMode = viewMode === "scrolled-doc" ? "paginated" : "scrolled-doc";
+        await setViewMode(newMode);
+    });
+}
 
+// navigation buttons
+previousButton.addEventListener("click", () => {
+    if (!rendition) {
+        return;
+    }
+    rendition.prev();
+});
+
+nextButton.addEventListener("click", () => {
+    if (!rendition) {
+        return;
+    }
+    rendition.next();
+});
+
+// keyboard navigation
+document.addEventListener("keydown", (event) => {
+    if (!rendition) {
+        return;
+    }
+    if (event.key === "ArrowLeft") {
         rendition.prev();
     }
-);
-
-nextButton.addEventListener(
-    "click",
-    () => {
-
-        if (!rendition) {
-            return;
-        }
-
+    if (event.key === "ArrowRight") {
         rendition.next();
     }
-);
+});
 
-// KEYBOARD NAVIGATION
+// file input button click event
+browseBtn.addEventListener("click", () => {
+    fileInput.click();
+});
 
-document.addEventListener(
-    "keydown",
-    (event) => {
-
+// Helper function to ensure that the rendition is available before executing a handler
+function withRendition(handler) {
+    return () => {
         if (!rendition) {
             return;
         }
+        handler(rendition);
+    };
+}
 
-        if (event.key === "ArrowLeft") {
-            rendition.prev();
-        }
-
-        if (event.key === "ArrowRight") {
-            rendition.next();
-        }
+// increase font size
+fontIncreaseButton?.addEventListener("click", withRendition(increaseFontSize));
+// decrease font size
+fontDecreaseButton?.addEventListener("click", withRendition(decreaseFontSize));
+// change font family. may add customization later to allow user to add their own fonts?
+fontFamilySelect?.addEventListener("change", (event) => withRendition(setFontFamily)(event.target.value));
+// change line height
+lineHeightSelect?.addEventListener("change", (event) => withRendition(setLineHeight)(event.target.value));
+// change theme; light, dark, sepia
+themeSelect?.addEventListener("change", (event) => withRendition(setTheme)(event.target.value));
+// change text alignment
+textAlignSelect?.addEventListener("change", (event) => withRendition(setTextAlign)(event.target.value));
+// change reader width
+readerWidthSelect?.addEventListener("change", (event) => withRendition(setReaderWidth)(event.target.value));
+// change reader height
+readerHeightSelect?.addEventListener("change", (event) => withRendition(setReaderHeight)(event.target.value));
+// reset reader settings to default
+resetSettingsButton?.addEventListener("click", () => {
+    if (!rendition) {
+        return;
     }
-);
+    resetReaderSettings(rendition);
+    syncSettingsUI();
+});
 
-// FILE BROWSER
-
-browseBtn.addEventListener(
-    "click",
-    () => {
-        fileInput.click();
-    }
-);
-
-// READER SETTINGS
-
-if (fontIncreaseButton) {
-
-    fontIncreaseButton.addEventListener(
-        "click",
-        () => {
-
-            if (!rendition) {
-                return;
-            }
-
-            increaseFontSize(
-                rendition
-            );
-        }
-    );
-}
-
-if (fontDecreaseButton) {
-
-    fontDecreaseButton.addEventListener(
-        "click",
-        () => {
-
-            if (!rendition) {
-                return;
-            }
-
-            decreaseFontSize(
-                rendition
-            );
-        }
-    );
-}
-
-if (fontFamilySelect) {
-
-    fontFamilySelect.addEventListener(
-        "change",
-        (event) => {
-
-            if (!rendition) {
-                return;
-            }
-
-            setFontFamily(
-                rendition,
-                event.target.value
-            );
-        }
-    );
-}
-
-if (lineHeightSelect) {
-
-    lineHeightSelect.addEventListener(
-        "change",
-        (event) => {
-
-            if (!rendition) {
-                return;
-            }
-
-            setLineHeight(
-                rendition,
-                event.target.value
-            );
-        }
-    );
-}
-
-if (themeSelect) {
-
-    themeSelect.addEventListener(
-        "change",
-        (event) => {
-
-            if (!rendition) {
-                return;
-            }
-
-            setTheme(
-                rendition,
-                event.target.value
-            );
-        }
-    );
-}
-
-if (textAlignSelect) {
-
-    textAlignSelect.addEventListener(
-        "change",
-        (event) => {
-
-            if (!rendition) {
-                return;
-            }
-
-            setTextAlign(
-                rendition,
-                event.target.value
-            );
-        }
-    );
-}
-
-if (readerWidthSelect) {
-
-    readerWidthSelect.addEventListener(
-        "change",
-        (event) => {
-
-            if (!rendition) {
-                return;
-            }
-
-            setReaderWidth(
-                rendition,
-                event.target.value
-            );
-        }
-    );
-}
-
-if (readerHeightSelect) {
-
-    readerHeightSelect.addEventListener(
-        "change",
-        (event) => {
-
-            if (!rendition) {
-                return;
-            }
-
-            setReaderHeight(
-                rendition,
-                event.target.value
-            );
-        }
-    );
-}
-
-if (resetSettingsButton) {
-
-    resetSettingsButton.addEventListener(
-        "click",
-        () => {
-
-            if (!rendition) {
-                return;
-            }
-
-            resetReaderSettings(
-                rendition
-            );
-
-            syncSettingsUI();
-        }
-    );
-}
-
+// Sync the settings UI with the current reader settings
 function syncSettingsUI() {
-
-    const settings =
-        getReaderSettings();
-
+    const settings = getReaderSettings();
 
     if (fontFamilySelect) {
-
-        fontFamilySelect.value =
-            settings.fontFamily;
+        fontFamilySelect.value = settings.fontFamily;
     }
-
-
     if (lineHeightSelect) {
-
-        lineHeightSelect.value =
-            String(
-                settings.lineHeight
-            );
+        lineHeightSelect.value = String(settings.lineHeight);
     }
-
-
     if (themeSelect) {
-
-        themeSelect.value =
-            settings.theme;
+        themeSelect.value = settings.theme;
     }
-
-
     if (textAlignSelect) {
-
-        textAlignSelect.value =
-            settings.textAlign;
+        textAlignSelect.value = settings.textAlign;
     }
-
     if (readerWidthSelect) {
-
-        readerWidthSelect.value =
-            settings.readerWidth;
+        readerWidthSelect.value = settings.readerWidth;
     }
-
     if (readerHeightSelect) {
-
-        readerHeightSelect.value =
-            settings.readerHeight;
+        readerHeightSelect.value = settings.readerHeight;
     }
 }

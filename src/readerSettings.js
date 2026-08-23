@@ -1,5 +1,3 @@
-// readerSettings.js
-
 const settings = {
     fontFamily: "Georgia, serif",
     fontSize: 18,
@@ -38,70 +36,50 @@ export function applyReaderSettings(rendition) {
 
     const theme = themes[settings.theme] || themes.light;
 
+    const linkColor = settings.theme === "dark"
+        ? "#8ab4f8 !important"
+        : "#4169e1 !important";
+
+    const baseTextStyles = {
+        "font-family": `${settings.fontFamily} !important`,
+        "color": `${theme.color} !important`
+    };
+
+    const paragraphStyles = {
+        ...baseTextStyles,
+        "font-size": `${settings.fontSize}px !important`,
+        "line-height": `${settings.lineHeight} !important`,
+        "text-align": `${settings.textAlign} !important`
+    };
+
     rendition.themes.register("reader-settings", {
         body: {
-            "font-family": `${settings.fontFamily} !important`,
-            "font-size": `${settings.fontSize}px !important`,
-            "line-height": `${settings.lineHeight} !important`,
+            ...paragraphStyles,
             "padding-left": "0 !important",
             "padding-right": "0 !important",
-            "background-color": `${theme.background} !important`,
-            "color": `${theme.color} !important`,
-            "text-align": `${settings.textAlign} !important`
+            "background-color": `${theme.background} !important`
         },
 
-        p: {
-            "font-family": `${settings.fontFamily} !important`,
-            "font-size": `${settings.fontSize}px !important`,
-            "line-height": `${settings.lineHeight} !important`,
-            "color": `${theme.color} !important`,
-            "text-align": `${settings.textAlign} !important`
-        },
+        p: paragraphStyles,
 
-        div: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        div: baseTextStyles,
 
-        span: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        span: baseTextStyles,
 
-        h1: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        h1: baseTextStyles,
 
-        h2: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        h2: baseTextStyles,
 
-        h3: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        h3: baseTextStyles,
 
-        h4: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        h4: baseTextStyles,
 
-        h5: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        h5: baseTextStyles,
 
-        h6: {
-            "font-family": `${settings.fontFamily} !important`,
-            "color": `${theme.color} !important`
-        },
+        h6: baseTextStyles,
 
         a: {
-            "color": settings.theme === "dark"
-                ? "#8ab4f8 !important"
-                : "#4169e1 !important"
+            "color": linkColor
         },
 
         img: {
@@ -118,12 +96,7 @@ export function applyReaderSettings(rendition) {
  * Increase font size
  */
 export function increaseFontSize(rendition) {
-    settings.fontSize += 2;
-
-    if (settings.fontSize > 40) {
-        settings.fontSize = 40;
-    }
-
+    settings.fontSize = Math.min(settings.fontSize + 2, 40);
     applyReaderSettings(rendition);
 }
 
@@ -132,12 +105,7 @@ export function increaseFontSize(rendition) {
  * Decrease font size
  */
 export function decreaseFontSize(rendition) {
-    settings.fontSize -= 2;
-
-    if (settings.fontSize < 10) {
-        settings.fontSize = 10;
-    }
-
+    settings.fontSize = Math.max(settings.fontSize - 2, 10);
     applyReaderSettings(rendition);
 }
 
@@ -146,16 +114,7 @@ export function decreaseFontSize(rendition) {
  * Set font size directly
  */
 export function setFontSize(rendition, size) {
-    settings.fontSize = Number(size);
-
-    if (settings.fontSize < 10) {
-        settings.fontSize = 10;
-    }
-
-    if (settings.fontSize > 40) {
-        settings.fontSize = 40;
-    }
-
+    settings.fontSize = Math.min(Math.max(Number(size), 10), 40);
     applyReaderSettings(rendition);
 }
 
@@ -165,7 +124,6 @@ export function setFontSize(rendition, size) {
  */
 export function setFontFamily(rendition, fontFamily) {
     settings.fontFamily = fontFamily;
-
     applyReaderSettings(rendition);
 }
 
@@ -174,16 +132,7 @@ export function setFontFamily(rendition, fontFamily) {
  * Change line height
  */
 export function setLineHeight(rendition, lineHeight) {
-    settings.lineHeight = Number(lineHeight);
-
-    if (settings.lineHeight < 1) {
-        settings.lineHeight = 1;
-    }
-
-    if (settings.lineHeight > 3) {
-        settings.lineHeight = 3;
-    }
-
+    settings.lineHeight = Math.min(Math.max(Number(lineHeight), 1), 3);
     applyReaderSettings(rendition);
 }
 

@@ -124,7 +124,7 @@ main {
     height: 100%;
     background: var(--warm-white);
     border-radius: 16px;
-    box-shadow: 0 4px 20px var(--soft-shadow), 0 1px 3px var(--shadow);
+    box-shadow: 0 4px 20px var(--soft-shadow), 0 1px 3px var(--soft-shadow);
     padding: 40px;
     overflow-y: auto;
     position: relative;
@@ -296,144 +296,6 @@ body.theme-sepia {
     color: var(--forest-green);
 }
 
-/* Header */
-
-header {
-    background: linear-gradient(135deg, #663232 0%, var(--moss-green) 100%);
-    box-shadow: 0 2px 12px var(--deep-shadow);
-}
-
-header h1 {
-    color: var(--warm-white);
-}
-
-#browseBtn {
-    background: linear-gradient(135deg, var(--sage-green) 0%, var(--moss-green) 100%);
-    color: white;
-    box-shadow: 0 2px 8px var(--soft-shadow);
-}
-
-#browseBtn:hover {
-    background: linear-gradient(135deg, var(--moss-green) 0%, var(--forest-green) 100%);
-    box-shadow: 0 4px 12px var(--deep-shadow);
-}
-
-#browseBtn:active {
-    box-shadow: 0 1px 4px var(--soft-shadow);
-}
-
-/* Footer */
-
-footer {
-    background: var(--warm-white);
-    border-top: 1px solid rgba(107, 143, 113, 0.2);
-    box-shadow: 0 -2px 8px var(--soft-shadow);
-}
-
-#location {
-    color: var(--earth-brown);
-    background: var(--cream);
-    border: 1px solid rgba(107, 143, 113, 0.2);
-}
-
-/* Buttons */
-
-button {
-    background: linear-gradient(135deg, var(--sage-green) 0%, var(--moss-green) 100%);
-    color: white;
-    box-shadow: 0 2px 8px var(--soft-shadow);
-}
-
-button:hover {
-    background: linear-gradient(135deg, var(--moss-green) 0%, var(--forest-green) 100%);
-    box-shadow: 0 4px 12px var(--deep-shadow);
-}
-
-button:active {
-    box-shadow: 0 1px 4px var(--soft-shadow);
-}
-
-button:disabled {
-    background: #b8c4b5;
-}
-
-/* Reader container */
-
-#reader {
-    background: var(--warm-white);
-    box-shadow: 0 4px 20px var(--soft-shadow), 0 1px 3px var(--shadow);
-    border: 1px solid rgba(107, 143, 113, 0.15);
-}
-
-/* TOC Panel */
-
-.toc {
-    background: var(--warm-white);
-    border: 1px solid rgba(107, 143, 113, 0.2);
-    box-shadow: 0 4px 20px var(--soft-shadow);
-}
-
-.toc-header {
-    border-bottom: 1px solid rgba(107, 143, 113, 0.2);
-}
-
-.toc-header h2 {
-    color: var(--forest-green);
-}
-
-.toc-entry {
-    color: var(--forest-green);
-}
-
-.toc-entry:hover {
-    background: rgba(107, 143, 113, 0.1);
-}
-
-.toc-entry.active {
-    background: rgba(107, 143, 113, 0.2);
-    color: var(--forest-green);
-}
-
-/* Reader Settings Panel */
-
-.reader-settings {
-    background: var(--warm-white);
-    border: 1px solid rgba(107, 143, 113, 0.2);
-    box-shadow: 0 4px 20px var(--soft-shadow);
-}
-
-.reader-settings-header {
-    border-bottom: 1px solid rgba(107, 143, 113, 0.2);
-}
-
-.reader-settings-header h2 {
-    color: var(--forest-green);
-}
-
-.setting-group label,
-.setting-group span {
-    color: var(--earth-brown);
-}
-
-.setting-group select {
-    border: 1px solid rgba(107, 143, 113, 0.3);
-    background: var(--cream);
-    color: var(--forest-green);
-}
-
-.setting-group select:focus {
-    border-color: var(--sage-green);
-    box-shadow: 0 0 0 3px rgba(107, 143, 113, 0.1);
-}
-
-#resetSettings {
-    background: linear-gradient(135deg, var(--terracotta) 0%, #a86842 100%);
-}
-
-#resetSettings:hover {
-    background: linear-gradient(135deg, #a86842 0%, #8a5535 100%);
-}
-
 /* ========================================
    Responsive / Mobile
 ======================================== */
@@ -550,24 +412,16 @@ button:disabled {
 
 .toc {
     position: absolute;
-
     left: 20px;
     top: 80px;
     bottom: 80px;
-
     width: 300px;
-
     background: var(--warm-white);
-
     border-radius: 16px;
     border: 1px solid rgba(107, 143, 113, 0.2);
-
     box-shadow: 0 4px 20px var(--soft-shadow);
-
     z-index: 100;
-
     display: none;
-
     flex-direction: column;
 }
 
@@ -575,35 +429,28 @@ button:disabled {
     display: flex;
 }
 
-
 /* TOC header */
 
 .toc-header {
     height: 50px;
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     padding: 0 15px;
-
     border-bottom: 1px solid rgba(107, 143, 113, 0.2);
 }
 
 .toc-header h2 {
     margin: 0;
-
     font-size: 18px;
     color: var(--forest-green);
 }
-
 
 /* Close button */
 
 #closeToc {
     padding: 4px 10px;
-
     font-size: 20px;
     color: var(--earth-brown);
     background: transparent;
@@ -617,39 +464,26 @@ button:disabled {
     color: var(--forest-green);
 }
 
-
 /* TOC list */
 
 .toc-list {
     flex: 1;
-
     overflow-y: auto;
-
     padding: 10px;
 }
-
 
 /* TOC buttons */
 
 .toc-entry {
     width: 100%;
-
     padding: 10px;
-
     margin-bottom: 2px;
-
     border: none;
-
     background: transparent;
-
     color: var(--forest-green);
-
     text-align: left;
-
     cursor: pointer;
-
     border-radius: 10px;
-
     font-size: 14px;
 }
 
@@ -663,13 +497,11 @@ button:disabled {
     font-weight: 600;
 }
 
-
 /* Nested entries */
 
 .toc-children {
     padding-left: 15px;
 }
-
 
 /* ========================================
    Reader Settings
@@ -677,24 +509,16 @@ button:disabled {
 
 .reader-settings {
     position: absolute;
-
     right: 20px;
     top: 80px;
     bottom: 80px;
-
     width: 280px;
-
     background: var(--warm-white);
-
     border-radius: 16px;
     border: 1px solid rgba(107, 143, 113, 0.2);
-
     box-shadow: 0 4px 20px var(--soft-shadow);
-
     z-index: 100;
-
     display: none;
-
     flex-direction: column;
 }
 
@@ -705,26 +529,21 @@ button:disabled {
 .reader-settings-header {
     height: 50px;
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     padding: 0 15px;
-
     border-bottom: 1px solid rgba(107, 143, 113, 0.2);
 }
 
 .reader-settings-header h2 {
     margin: 0;
-
     font-size: 18px;
     color: var(--forest-green);
 }
 
 #closeSettings {
     padding: 4px 10px;
-
     font-size: 20px;
     color: var(--earth-brown);
     background: transparent;
@@ -740,11 +559,8 @@ button:disabled {
 
 .reader-settings-body {
     flex: 1;
-
     overflow-y: auto;
-
     padding: 15px;
-
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -767,16 +583,11 @@ button:disabled {
 
 .setting-group select {
     padding: 8px 12px;
-
     border: 1px solid rgba(107, 143, 113, 0.3);
     border-radius: 10px;
-
     background: var(--cream);
-
     color: var(--forest-green);
-
     font-size: 14px;
-
     cursor: pointer;
 }
 
@@ -788,21 +599,15 @@ button:disabled {
 
 .setting-group button {
     padding: 6px 14px;
-
     font-size: 13px;
-
     border-radius: 10px;
 }
 
 #resetSettings {
     margin-top: auto;
-
     padding: 10px;
-
     border-radius: 10px;
-
     font-size: 14px;
-
     background: linear-gradient(135deg, var(--terracotta) 0%, #a86842 100%);
 }
 
@@ -812,17 +617,9 @@ button:disabled {
 
 #bookTitle {
     flex: 1;
-
     overflow: hidden;
-
     white-space: nowrap;
-
     text-overflow: ellipsis;
-
     color: #ccc;
-
     font-size: 16px;
 }
-
-
-
