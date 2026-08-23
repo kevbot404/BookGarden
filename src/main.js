@@ -149,17 +149,22 @@ async function setViewMode(mode) {
     updateViewModeButton();
 }
 
-// Handle file input change event
-// When a user selects an EPUB file, read it (arrayBuffer) and render it using epub.js
-// get toc, metadata, sync settings UI, update view mode button
-fileInput.addEventListener("change", async (event) => {
-    const file = event.target.files[0];
-    if (!file) {
-        return;
-    }
-
+async function openbook(source) {
     try {
-        const arrayBuffer = await file.arrayBuffer();
+        let arrayBuffer;
+
+        if (typeof source === "string") {
+            const response = await fetch(source);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch book: ${response.statusText}`);
+            }
+            arrayBuffer = await response.arrayBuffer();
+        } else if (source instanceof ArrayBuffer) {
+            arrayBuffer = source;
+        } else {
+            throw new Error("Invalid source: expected ArrayBuffer or URL string");
+        }
+
         reader.innerHTML = "";
         book = ePub(arrayBuffer);
 
@@ -182,7 +187,25 @@ fileInput.addEventListener("change", async (event) => {
 
         await rendition.display();
 
-        console.log("EPUB loaded:", file.name);
+        console.log("EPUB loaded");
+    } catch (error) {
+        console.error("Failed to load EPUB:", error);
+        locationDisplay.textContent = "Failed to load EPUB";
+    }
+}
+
+// Handle file input change event
+// When a user selects an EPUB file, read it (arrayBuffer) and render it using epub.js
+// get toc, metadata, sync settings UI, update view mode button
+fileInput.addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        await openbook(arrayBuffer);
     } catch (error) {
         console.error("Failed to load EPUB:", error);
         locationDisplay.textContent = "Failed to load EPUB";
