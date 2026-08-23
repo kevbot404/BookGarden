@@ -21,8 +21,8 @@ export function applyReaderSettings(rendition) {
 
     const themes = {
         light: {
-            background: "#ffffff",
-            color: "#222222"
+            background: "#fefdfb",
+            color: "#2d4a22"
         },
 
         dark: {
@@ -31,7 +31,7 @@ export function applyReaderSettings(rendition) {
         },
 
         sepia: {
-            background: "#FDF6E3",
+            background: "#fdf6e3",
             color: "#5b4636"
         }
     };

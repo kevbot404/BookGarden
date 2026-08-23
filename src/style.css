@@ -98,18 +98,15 @@ header h1::before {
     font-weight: 500;
     letter-spacing: 0.3px;
     cursor: pointer;
-    transition: all 0.3s ease;
     box-shadow: 0 2px 8px var(--soft-shadow);
 }
 
 #browseBtn:hover {
     background: linear-gradient(135deg, var(--moss-green) 0%, var(--forest-green) 100%);
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px var(--deep-shadow);
 }
 
 #browseBtn:active {
-    transform: translateY(0);
     box-shadow: 0 1px 4px var(--soft-shadow);
 }
 
@@ -189,18 +186,15 @@ button {
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.3px;
-    transition: all 0.3s ease;
     box-shadow: 0 2px 8px var(--soft-shadow);
 }
 
 button:hover {
     background: linear-gradient(135deg, var(--moss-green) 0%, var(--forest-green) 100%);
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px var(--deep-shadow);
 }
 
 button:active {
-    transform: translateY(0);
     box-shadow: 0 1px 4px var(--soft-shadow);
 }
 
@@ -208,7 +202,6 @@ button:disabled {
     background: #b8c4b5;
     cursor: not-allowed;
     opacity: 0.6;
-    transform: none;
     box-shadow: none;
 }
 
@@ -253,9 +246,9 @@ body.theme-light {
 
 html.theme-dark,
 body.theme-dark {
-    --forest-green: #5b4636;
-    --sage-green: #8ab4f8;
-    --moss-green: #7a8fa8;
+    --forest-green: #e5e5e5;
+    --sage-green: #4a6a8a;
+    --moss-green: #2a4a6a;
     --soft-sage: #6b8f71;
     --cream: #1e1e1e;
     --warm-white: #2d2d2d;
@@ -266,6 +259,24 @@ body.theme-dark {
 
     background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
     color: var(--forest-green);
+}
+
+html.theme-dark header h1,
+body.theme-dark header h1 {
+    color: #e5e5e5;
+}
+
+html.theme-dark .setting-group select,
+body.theme-dark .setting-group select {
+    background: #2d2d2d;
+    color: #e5e5e5;
+    border-color: rgba(138, 180, 248, 0.3);
+}
+
+html.theme-dark .setting-group select:focus,
+body.theme-dark .setting-group select:focus {
+    border-color: #8ab4f8;
+    box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.15);
 }
 
 html.theme-sepia,
@@ -288,7 +299,7 @@ body.theme-sepia {
 /* Header */
 
 header {
-    background: linear-gradient(135deg, var(--forest-green) 0%, var(--moss-green) 100%);
+    background: linear-gradient(135deg, #663232 0%, var(--moss-green) 100%);
     box-shadow: 0 2px 12px var(--deep-shadow);
 }
 
@@ -599,7 +610,6 @@ button:disabled {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 #closeToc:hover {
@@ -641,7 +651,6 @@ button:disabled {
     border-radius: 10px;
 
     font-size: 14px;
-    transition: all 0.2s ease;
 }
 
 .toc-entry:hover {
@@ -722,7 +731,6 @@ button:disabled {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
 #closeSettings:hover {
@@ -770,8 +778,6 @@ button:disabled {
     font-size: 14px;
 
     cursor: pointer;
-
-    transition: all 0.2s ease;
 }
 
 .setting-group select:focus {
@@ -817,3 +823,6 @@ button:disabled {
 
     font-size: 16px;
 }
+
+
+
