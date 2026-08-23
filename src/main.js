@@ -38,6 +38,7 @@ const settingsButton = document.getElementById("settingsButton");
 const closeSettingsButton = document.getElementById("closeSettings");
 const settingsPanel = document.getElementById("readerSettings");
 const viewModeButton = document.getElementById("viewModeButton");
+const enterLibraryButton = document.getElementById("enterLibraryBtn");
 
 const fontIncreaseButton = document.getElementById("fontIncrease");
 const fontDecreaseButton = document.getElementById("fontDecrease");
@@ -149,6 +150,7 @@ async function setViewMode(mode) {
     updateViewModeButton();
 }
 
+// Open a book from a URL or an ArrayBuffer, read its metadata and TOC, create a rendition, and display it
 async function openbook(source) {
     try {
         let arrayBuffer;
@@ -194,9 +196,7 @@ async function openbook(source) {
     }
 }
 
-// Handle file input change event
-// When a user selects an EPUB file, read it (arrayBuffer) and render it using epub.js
-// get toc, metadata, sync settings UI, update view mode button
+// Handle file input change event, delegate to openbook function with the selected file's ArrayBuffer
 fileInput.addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -334,3 +334,7 @@ function syncSettingsUI() {
         readerHeightSelect.value = settings.readerHeight;
     }
 }
+
+enterLibraryButton?.addEventListener("click", () => {
+    window.location.href = "library.html";
+});
