@@ -338,3 +338,19 @@ function syncSettingsUI() {
 enterLibraryButton?.addEventListener("click", () => {
     window.location.href = "library.html";
 });
+
+const urlParams = new URLSearchParams(window.location.search);
+const bookParam = urlParams.get("book");
+
+if (bookParam) {
+    fetch(`/book_samples/${encodeURIComponent(bookParam)}`)
+        .then((res) => {
+            if (!res.ok) throw new Error(`Failed to fetch book: ${res.statusText}`);
+            return res.arrayBuffer();
+        })
+        .then((buffer) => openbook(buffer))
+        .catch((err) => {
+            console.error("Failed to load book from library:", err);
+            locationDisplay.textContent = "Failed to load book";
+        });
+}
