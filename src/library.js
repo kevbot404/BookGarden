@@ -5,7 +5,6 @@ const libraryEl = document.getElementById("library");
 const enterReaderButton = document.getElementById("enterReaderBtn");
 
 const sampleBooks = [
-    "The Odyssey by Homer.epub",
     "The Adventures of Sherlock Holmes by Arthur Conan Doyle.epub",
     "Crime and Punishment by Fyodor Dostoyevsky.epub"
 ];
@@ -24,6 +23,7 @@ async function loadLibrary() {
 
     for (const file of sampleBooks) {
         let title, author;
+        let book = null;
 
         try {
             const response = await fetch(`/book_samples/${encodeURIComponent(file)}`);
@@ -31,7 +31,7 @@ async function loadLibrary() {
                 throw new Error(`HTTP ${response.status}`);
             }
             const arrayBuffer = await response.arrayBuffer();
-            const book = ePub(arrayBuffer);
+            book = ePub(arrayBuffer);
 
             try {
                 const metadata = await Promise.race([
@@ -54,12 +54,24 @@ async function loadLibrary() {
         const card = document.createElement("div");
         card.className = "book-card";
         card.innerHTML = `
-            <div class="book-cover">📖</div>
+            <div class="book-cover">
+                <img alt="${title} cover" />
+            </div>
             <div class="book-info">
                 <h3>${title}</h3>
                 <p>${author}</p>
             </div>
         `;
+
+        if (book) {
+            book.coverUrl().then((coverUrl) => {
+                const img = card.querySelector("img");
+                if (img && coverUrl) {
+                    img.src = coverUrl;
+                }
+            });
+        }
+
         card.addEventListener("click", () => {
             const url = new URL("index.html", window.location.href);
             url.searchParams.set("book", file);
