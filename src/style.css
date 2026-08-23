@@ -261,6 +261,12 @@ body.theme-dark {
     color: var(--forest-green);
 }
 
+html.theme-dark header,
+body.theme-dark header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    box-shadow: 0 2px 12px var(--deep-shadow);
+}
+
 html.theme-dark header h1,
 body.theme-dark header h1 {
     color: #e5e5e5;

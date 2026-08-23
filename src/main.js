@@ -191,6 +191,7 @@ fileInput.addEventListener("change", async (event) => {
 
 // settings panel buttons
 settingsButton.addEventListener("click", () => {
+    tocPanel.classList.remove("open");
     settingsPanel.classList.toggle("open");
 });
 
@@ -200,6 +201,7 @@ closeSettingsButton.addEventListener("click", () => {
 
 // table of contents panel buttons
 tocButton.addEventListener("click", () => {
+    settingsPanel.classList.remove("open");
     tocPanel.classList.toggle("open");
 });
 
