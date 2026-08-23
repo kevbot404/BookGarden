@@ -152,22 +152,16 @@ async function setViewMode(mode) {
     updateViewModeButton();
 }
 
-// Open a book from a URL or an ArrayBuffer, read its metadata and TOC, create a rendition, and display it
+// Open a book from an ArrayBuffer, read its metadata and TOC, create a rendition, and display it
 async function openbook(source) {
     try {
         let arrayBuffer;
 
-        if (typeof source === "string") {
-            const response = await fetch(source);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch book: ${response.statusText}`);
-            }
-            arrayBuffer = await response.arrayBuffer();
-        } else if (source instanceof ArrayBuffer) {
-            arrayBuffer = source;
-        } else {
-            throw new Error("Invalid source: expected ArrayBuffer or URL string");
+        if (!(source instanceof ArrayBuffer)) {
+            throw new Error("Invalid source: expected ArrayBuffer");
         }
+
+        arrayBuffer = source;
 
         reader.innerHTML = "";
         book = ePub(arrayBuffer);
@@ -343,21 +337,9 @@ enterLibraryButton?.addEventListener("click", () => {
 
 const urlParams = new URLSearchParams(window.location.search);
 const bookParam = urlParams.get("book");
-const userBookParam = urlParams.get("userBook");
 
 if (bookParam) {
-    fetch(`/book_samples/${encodeURIComponent(bookParam)}`)
-        .then((res) => {
-            if (!res.ok) throw new Error(`Failed to fetch book: ${res.statusText}`);
-            return res.arrayBuffer();
-        })
-        .then((buffer) => openbook(buffer))
-        .catch((err) => {
-            console.error("Failed to load book from library:", err);
-            locationDisplay.textContent = "Failed to load book";
-        });
-} else if (userBookParam) {
-    getBook(userBookParam)
+    getBook(bookParam)
         .then((stored) => {
             if (stored && stored.arrayBuffer) {
                 return openbook(stored.arrayBuffer);
@@ -365,7 +347,7 @@ if (bookParam) {
             throw new Error("Book not found in storage");
         })
         .catch((err) => {
-            console.error("Failed to load user book:", err);
+            console.error("Failed to load book:", err);
             locationDisplay.textContent = "Failed to load book";
         });
 }

@@ -7,12 +7,7 @@ const enterReaderButton = document.getElementById("enterReaderBtn");
 const browseBtn = document.getElementById("browseBtn");
 const epubFileInput = document.getElementById("epubFile");
 
-const sampleBooks = [
-    "The Adventures of Sherlock Holmes by Arthur Conan Doyle.epub",
-    "Crime and Punishment by Fyodor Dostoyevsky.epub"
-];
-
-let userBooks = [];
+let libraryBooks = [];
 
 function getFallbackTitle(file) {
     return file.replace(".epub", "").replace(/ by .*$/, "");
@@ -42,118 +37,111 @@ async function coverUrlToDataUrl(url) {
     }
 }
 
-// Load user books from IndexedDB
-async function loadUserBooks() {
-    try {
-        const stored = await getAllBooks();
-        userBooks = stored.map(entry => ({
-            id: entry.id,
-            title: entry.metadata?.title || "Unknown Title",
-            author: entry.metadata?.author || "Unknown Author",
-            coverUrl: entry.metadata?.coverUrl || null
-        }));
-    } catch (err) {
-        console.error("Failed to load user books:", err);
-        userBooks = [];
+// Seed sample books into IndexedDB if no books exist yet
+async function seedSampleBooks() {
+    const sampleFiles = [
+        "The Adventures of Sherlock Holmes by Arthur Conan Doyle.epub",
+        "Crime and Punishment by Fyodor Dostoyevsky.epub"
+    ];
+
+    const existing = await getAllBooks();
+    if (existing.length > 0) {
+        return;
     }
-}
 
-// Load the library with sample and user-uploaded books
-async function loadLibrary() {
-    libraryEl.innerHTML = "";
-
-    await loadUserBooks();
-
-    for (const file of sampleBooks) {
-        let title, author;
-        let book = null;
-
+    for (const file of sampleFiles) {
         try {
             const response = await fetch(`/book_samples/${encodeURIComponent(file)}`);
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+                console.warn(`Sample book not found: ${file}`);
+                continue;
             }
             const arrayBuffer = await response.arrayBuffer();
-            book = ePub(arrayBuffer);
+            const book = ePub(arrayBuffer);
+
+            let title = getFallbackTitle(file);
+            let author = getFallbackAuthor(file);
+            let coverUrl = null;
 
             try {
                 const metadata = await Promise.race([
                     readMetadata(book),
                     new Promise((_, reject) => setTimeout(() => reject(new Error("Metadata timeout")), 10000))
                 ]);
-                title = metadata.title || getFallbackTitle(file);
-                author = metadata.creator || getFallbackAuthor(file);
+                title = metadata.title || title;
+                author = metadata.creator || author;
             } catch (metadataErr) {
                 console.warn(`Metadata failed for ${file}:`, metadataErr);
-                title = getFallbackTitle(file);
-                author = getFallbackAuthor(file);
             }
-        } catch (err) {
-            console.error(`Failed to load book file: ${file}`, err);
-            title = getFallbackTitle(file);
-            author = "Unavailable";
-        }
 
-        const card = document.createElement("div");
-        card.className = "book-card";
-        card.innerHTML = `
-            <div class="book-cover">
-                <img alt="${title} cover" />
-            </div>
-            <div class="book-info">
-                <h3>${title}</h3>
-                <p>${author}</p>
-            </div>
-        `;
-
-        if (book) {
-            book.coverUrl().then((coverUrl) => {
-                const img = card.querySelector("img");
-                if (img && coverUrl) {
-                    img.src = coverUrl;
+            try {
+                const rawCoverUrl = await book.coverUrl();
+                if (rawCoverUrl) {
+                    coverUrl = await coverUrlToDataUrl(rawCoverUrl);
                 }
-            });
-        }
+            } catch (coverErr) {
+                console.warn(`Cover failed for ${file}:`, coverErr);
+            }
 
-        card.addEventListener("click", () => {
-            const url = new URL("index.html", window.location.href);
-            url.searchParams.set("book", file);
-            window.location.href = url.toString();
-        });
-        libraryEl.appendChild(card);
+            const bookId = `sample-${file.replace(".epub", "").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+            await saveBook({
+                id: bookId,
+                arrayBuffer,
+                metadata: { title, author, coverUrl }
+            });
+        } catch (err) {
+            console.error(`Failed to seed sample book ${file}:`, err);
+        }
+    }
+}
+
+// Load the library from IndexedDB
+async function loadLibrary() {
+    libraryEl.innerHTML = "";
+
+    try {
+        const stored = await getAllBooks();
+        libraryBooks = stored.map(entry => ({
+            id: entry.id,
+            title: entry.metadata?.title || "Unknown Title",
+            author: entry.metadata?.author || "Unknown Author",
+            coverUrl: entry.metadata?.coverUrl || null
+        }));
+    } catch (err) {
+        console.error("Failed to load library:", err);
+        libraryBooks = [];
     }
 
-    for (const userBook of userBooks) {
+    for (const book of libraryBooks) {
         const card = document.createElement("div");
         card.className = "book-card";
         card.innerHTML = `
             <div class="book-cover">
-                <img alt="${userBook.title} cover" />
+                <img alt="${book.title} cover" />
             </div>
             <div class="book-info">
-                <h3>${userBook.title}</h3>
-                <p>${userBook.author}</p>
+                <h3>${book.title}</h3>
+                <p>${book.author}</p>
             </div>
-            <button class="remove-book-btn" data-id="${userBook.id}">Remove</button>
+            <button class="remove-book-btn" data-id="${book.id}">Remove</button>
         `;
 
-        if (userBook.coverUrl) {
+        if (book.coverUrl) {
             const img = card.querySelector("img");
             if (img) {
-                img.src = userBook.coverUrl;
+                img.src = book.coverUrl;
             }
         }
 
         const removeButton = card.querySelector(".remove-book-btn");
         removeButton.addEventListener("click", async (event) => {
             event.stopPropagation();
-            const confirmRemove = confirm(`Remove "${userBook.title}" from your library?`);
+            const confirmRemove = confirm(`Remove "${book.title}" from your library?`);
             if (!confirmRemove) {
                 return;
             }
             try {
-                await deleteBook(userBook.id);
-                userBooks = userBooks.filter(b => b.id !== userBook.id);
+                await deleteBook(book.id);
                 loadLibrary();
             } catch (error) {
                 console.error("Failed to remove book:", error);
@@ -163,7 +151,7 @@ async function loadLibrary() {
 
         card.addEventListener("click", () => {
             const url = new URL("index.html", window.location.href);
-            url.searchParams.set("userBook", userBook.id);
+            url.searchParams.set("book", book.id);
             window.location.href = url.toString();
         });
         libraryEl.appendChild(card);
@@ -220,15 +208,6 @@ epubFileInput.addEventListener("change", async (event) => {
             metadata: { title, author, coverUrl }
         });
 
-        userBooks.push({
-            id: bookId,
-            title,
-            author,
-            coverUrl
-        });
-
-        epubFileInput.value = "";
-
         loadLibrary();
     } catch (error) {
         console.error("Failed to load user book:", error);
@@ -236,8 +215,13 @@ epubFileInput.addEventListener("change", async (event) => {
     }
 });
 
-// Load the library when the page is ready
-loadLibrary();
+// Initialize sample books and load the library
+async function init() {
+    await seedSampleBooks();
+    loadLibrary();
+}
+
+init();
 
 enterReaderButton.addEventListener("click", () => {
     window.location.href = "index.html";
