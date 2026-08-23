@@ -657,6 +657,28 @@ body.theme-sepia {
     color: var(--earth-brown);
 }
 
+.remove-book-btn {
+    margin-top: 12px;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #c17f59 0%, #a86842 100%);
+    color: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 2px 6px var(--soft-shadow);
+}
+
+.remove-book-btn:hover {
+    background: linear-gradient(135deg, #a86842 0%, #8a5535 100%);
+    box-shadow: 0 4px 10px var(--deep-shadow);
+}
+
+.remove-book-btn:active {
+    box-shadow: 0 1px 4px var(--soft-shadow);
+}
+
 @media (max-width: 480px) {
     .library-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));

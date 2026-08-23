@@ -8,6 +8,8 @@ import {
     readMetadata
 } from "./helpers.js";
 
+import { getBook } from "./bookStore.js";
+
 import {
     applyReaderSettings,
     increaseFontSize,
@@ -341,6 +343,7 @@ enterLibraryButton?.addEventListener("click", () => {
 
 const urlParams = new URLSearchParams(window.location.search);
 const bookParam = urlParams.get("book");
+const userBookParam = urlParams.get("userBook");
 
 if (bookParam) {
     fetch(`/book_samples/${encodeURIComponent(bookParam)}`)
@@ -351,6 +354,18 @@ if (bookParam) {
         .then((buffer) => openbook(buffer))
         .catch((err) => {
             console.error("Failed to load book from library:", err);
+            locationDisplay.textContent = "Failed to load book";
+        });
+} else if (userBookParam) {
+    getBook(userBookParam)
+        .then((stored) => {
+            if (stored && stored.arrayBuffer) {
+                return openbook(stored.arrayBuffer);
+            }
+            throw new Error("Book not found in storage");
+        })
+        .catch((err) => {
+            console.error("Failed to load user book:", err);
             locationDisplay.textContent = "Failed to load book";
         });
 }
