@@ -40,8 +40,8 @@ async function coverUrlToDataUrl(url) {
 // Seed sample books into IndexedDB if no books exist yet
 async function seedSampleBooks() {
     const sampleFiles = [
-        "The Adventures of Sherlock Holmes by Arthur Conan Doyle.epub",
-        "Crime and Punishment by Fyodor Dostoyevsky.epub"
+        "The-Adventures-of-Sherlock-Holmes-by-Arthur-Conan-Doyle.epub",
+        "Crime-and-Punishment-by-Fyodor-Dostoyevsky.epub"
     ];
 
     const existing = await getAllBooks();
@@ -51,7 +51,7 @@ async function seedSampleBooks() {
 
     for (const file of sampleFiles) {
         try {
-            const response = await fetch(`/book_samples/${encodeURIComponent(file)}`);
+            const response = await fetch(`book_samples/${file}`);
             if (!response.ok) {
                 console.warn(`Sample book not found: ${file}`);
                 continue;

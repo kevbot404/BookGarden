@@ -4,7 +4,9 @@
   "description": "<p align=\"center\">\r   <img src=\"screenshots/logo.png\" height=\"250\" width=\"300\" title=\"BookGarden\" alt=\"BookGarden\">\r </p>",
   "main": "index.js",
   "scripts": {
-    "dev": "vite"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",

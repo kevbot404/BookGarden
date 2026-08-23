@@ -9,13 +9,13 @@ EPUB reader and personal library that runs entirely in your browser.
 ## Interface
 
 <p align="center">
-  <img src="media/ss2.PNG" title="BookGarden" alt="BookGarden">
+  <img src="media/ss2.png" title="BookGarden" alt="BookGarden">
 </p>
 <p align="center">
-  <img src="media/ss1.PNG" title="BookGarden" alt="BookGarden">
+  <img src="media/ss1.png" title="BookGarden" alt="BookGarden">
 </p>
 <p align="center">
-  <img src="media/ss3.PNG" title="BookGarden" alt="BookGarden">
+  <img src="media/ss3.png" title="BookGarden" alt="BookGarden">
 </p>
 
 ## Features
@@ -33,6 +33,18 @@ EPUB reader and personal library that runs entirely in your browser.
 - View mode switching (scrolled / paginated)
 - Previous/next chapter navigation
 - Keyboard navigation (arrow keys)
+
+## How to Run
+
+```bash
+npm install
+npm run dev
+```
+
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run build`   | Build for production     |
+| `npm run preview` | Preview production build |
 
 ## Built With
 
