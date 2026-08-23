@@ -24,12 +24,12 @@ export function applyReaderSettings(rendition) {
         },
 
         dark: {
-            background: "#121212",
+            background: "#2D2D2D",
             color: "#e5e5e5"
         },
 
         sepia: {
-            background: "#f4ecd8",
+            background: "#FDF6E3",
             color: "#5b4636"
         }
     };
@@ -187,6 +187,22 @@ export function setLineHeight(rendition, lineHeight) {
 
 
 /**
+ * Apply a theme class to the whole page (body + html).
+ */
+function applyPageTheme(theme) {
+    const root = document.documentElement;
+    const body = document.body;
+
+    root.classList.remove("theme-light", "theme-dark", "theme-sepia");
+    body.classList.remove("theme-light", "theme-dark", "theme-sepia");
+
+    if (theme && theme !== "light") {
+        root.classList.add(`theme-${theme}`);
+        body.classList.add(`theme-${theme}`);
+    }
+}
+
+/**
  * Change theme
  *
  * Available:
@@ -202,6 +218,7 @@ export function setTheme(rendition, theme) {
     settings.theme = theme;
 
     applyReaderSettings(rendition);
+    applyPageTheme(theme);
 }
 
 
@@ -240,4 +257,5 @@ export function resetReaderSettings(rendition) {
     settings.textAlign = "left";
 
     applyReaderSettings(rendition);
+    applyPageTheme("light");
 }

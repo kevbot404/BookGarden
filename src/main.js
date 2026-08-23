@@ -554,7 +554,7 @@ if (resetSettingsButton) {
     );
 }
 
-export function syncSettingsUI() {
+function syncSettingsUI() {
 
     const settings =
         getReaderSettings();
