@@ -253,11 +253,11 @@ browseBtn.addEventListener("click", () => {
 
 // Helper function to ensure that the rendition is available before executing a handler
 function withRendition(handler) {
-    return () => {
+    return (...args) => {
         if (!rendition) {
             return;
         }
-        handler(rendition);
+        handler(rendition, ...args);
     };
 }
 
