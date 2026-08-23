@@ -123,6 +123,7 @@ async function loadLibrary() {
                 <h3>${book.title}</h3>
                 <p>${book.author}</p>
             </div>
+            <hr class="book-separator" />
             <button class="remove-book-btn" data-id="${book.id}">Remove</button>
         `;
 
